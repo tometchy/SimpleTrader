@@ -1,3 +1,6 @@
-using System;
+using Akka.Actor;
+using Infrastructure;
+using SimpleTrader;
 
-Console.WriteLine("Hello, World!");
+var appProcess = new SyncAppProcess(new AppBridge(Props.Create(() => new App())));
+appProcess.StartAndWaitForTermination();
