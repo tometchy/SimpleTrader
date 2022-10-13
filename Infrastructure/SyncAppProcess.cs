@@ -12,7 +12,6 @@ namespace Infrastructure
         {
             try
             {
-                Console.WriteLine("Start");
                 _asyncAppProcess.Start();
 
                 Console.CancelKeyPress += (sender, eventArgs) => _asyncAppProcess.ForceTermination();
