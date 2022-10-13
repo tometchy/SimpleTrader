@@ -7,3 +7,9 @@ services:
       context: ..
       dockerfile: SimpleTrader/Dockerfile
     env_file: .env
+    environment:
+      CURRENCY: btc
+      INITIAL_PRICE: 19000
+      TYPE: long
+      THRESHOLD: 5
+      FIAT_AMOUNT: 10
