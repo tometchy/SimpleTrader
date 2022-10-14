@@ -2,7 +2,7 @@ using System.Globalization;
 using NUnit.Framework;
 using SimpleTrader;
 using static SimpleTrader.BetParameters.BetType;
-
+// ReSharper disable ObjectCreationAsStatement
 // ReSharper disable ClassNeverInstantiated.Global
 
 namespace SimpleTraderTests;
