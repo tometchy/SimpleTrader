@@ -11,3 +11,6 @@ When you think that crypto price will drop, spend 10% of your crypto into dollar
 App will watch crypto price and whenever it will raise above threshold, the bet will be closed.
 
 See [bdd tests](SimpleTraderTests/BettingTests.cs) for more specific examples.
+
+## Note
+Kraken api uses slightly [different tickers](https://support.kraken.com/hc/en-us/articles/360000920306-API-symbols-and-tickers) than you see in theirs browser app.
