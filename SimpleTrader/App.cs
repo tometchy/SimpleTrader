@@ -8,7 +8,7 @@ namespace SimpleTrader
 {
     public class App : ReceiveActor
     {
-        public App(KrakenClient krakenClient)
+        public App(KrakenClient krakenClient, BetParameters bet)
         {
             Context.GetLogger().Info("Creating app");
             // Context.ActorOf(Props.Create(() => new UsersRepository()), nameof(UsersRepository));
