@@ -1,6 +1,7 @@
 using System.Globalization;
 using NUnit.Framework;
 using SimpleTrader;
+using static SimpleTrader.BetParameters.BetType;
 
 // ReSharper disable ClassNeverInstantiated.Global
 
@@ -14,7 +15,7 @@ public class BetParametersCreationTests
         public void Converting_parameters_should_work()
         {
             var cryptoTicker = "btc";
-            var betType = BetParameters.BetType.Long;
+            var betType = Long;
             decimal initialPriceUsd = 100000;
             double threshold = 5;
             double amount = 10000;
@@ -44,8 +45,8 @@ public class BetParametersCreationTests
                     F.Create<double>().ToString(CultureInfo.InvariantCulture)
                 ));
 
-        [TestCase(BetParameters.BetType.Short, 100.0)]
-        [TestCase(BetParameters.BetType.Long, 0.5)]
+        [TestCase(Short, 100.0)]
+        [TestCase(Long, 0.5)]
         public void Converting_parameters_should_fail_due_to_long_with_short_confusion(
             BetParameters.BetType confusedBetType,
             decimal amount)

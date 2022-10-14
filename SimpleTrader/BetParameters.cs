@@ -1,3 +1,5 @@
+using static SimpleTrader.BetParameters.BetType;
+
 namespace SimpleTrader;
 
 public class BetParameters
@@ -16,12 +18,12 @@ public class BetParameters
         Threshold = double.Parse(threshold);
         Amount = double.Parse(amount);
 
-        if (Type is BetType.Long && Amount < 5)
+        if (Type is Long && Amount < 5)
             throw new ArgumentException($"Detected wrong type of bet. " +
                                         $"You declared that {cryptoTicker} price will raise and that you have spent" +
                                         $"{Amount} dollars for it. It's too small to make sense.");
 
-        if (Type is BetType.Short && Amount > 5)
+        if (Type is Short && Amount > 5)
             throw new ArgumentException($"Detected wrong type of bet. " +
                                         $"You declared that {cryptoTicker} price will fall and that you have spent" +
                                         $"{Amount} of it. It seems too much for this kind of simple trading.");
