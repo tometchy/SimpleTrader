@@ -8,13 +8,13 @@ namespace SimpleTrader
 {
     public class App : ReceiveActor
     {
-        public App(KrakenClient krakenClient, BetParameters bet)
+        public App(IKrakenClientAdapter krakenClient, BetParameters bet)
         {
             Context.GetLogger().Info("Creating app");
             // Context.ActorOf(Props.Create(() => new UsersRepository()), nameof(UsersRepository));
-            
-            var tickerData = krakenClient.SpotApi.ExchangeData.GetTickerAsync("XBTUSD").Result;
-            Console.WriteLine(tickerData.Data.First().Value.LastTrade.Price);
+
+            var assetPrice = krakenClient.GetAssetPrice("XBTUSD");
+            Console.WriteLine(assetPrice);
         }
     }
 }
