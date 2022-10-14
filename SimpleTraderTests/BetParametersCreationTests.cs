@@ -1,5 +1,7 @@
 using System.Globalization;
 using NUnit.Framework;
+using SimpleTrader;
+
 // ReSharper disable ClassNeverInstantiated.Global
 
 namespace SimpleTraderTests;
@@ -33,7 +35,7 @@ public class BetParametersCreationTests
 
         [Test]
         public void Converting_parameters_should_fail_due_to_malformed_bet_type() =>
-            Assert.Throws<Exception>(
+            Assert.Throws<ArgumentException>(
                 () => new BetParameters(
                     F.Create<string>(),
                     "MALFORMED",
@@ -48,7 +50,7 @@ public class BetParametersCreationTests
             BetParameters.BetType confusedBetType,
             decimal amount)
         {
-            Assert.Throws<Exception>(
+            Assert.Throws<ArgumentException>(
                 () => new BetParameters(
                     F.Create<string>(),
                     confusedBetType.ToString(),
