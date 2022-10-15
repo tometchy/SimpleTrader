@@ -1,6 +1,7 @@
 using System.Globalization;
 using NUnit.Framework;
 using SimpleTrader;
+using static SimpleTrader.BetParameters;
 using static SimpleTrader.BetParameters.BetType;
 
 // ReSharper disable ObjectCreationAsStatement
@@ -15,13 +16,15 @@ public class BetParametersCreationTests
         [Test]
         public void Converting_parameters_should_work()
         {
-            var cryptoTicker = "btc";
-            var betType = Long;
-            decimal initialPriceUsd = 100000;
-            double threshold = 5;
-            double amount = 10000;
+            var id = F.Create<string>();
+            var cryptoTicker = F.Create<string>();
+            var betType = F.Create<BetType>();
+            decimal initialPriceUsd = F.Create<decimal>();
+            double threshold = F.Create<double>();
+            double amount = F.Create<double>();
 
-            var bet = new BetParameters(cryptoTicker,
+            var bet = new BetParameters(id,
+                cryptoTicker,
                 betType.ToString(),
                 initialPriceUsd.ToString(CultureInfo.InvariantCulture),
                 threshold.ToString(CultureInfo.InvariantCulture),
@@ -37,6 +40,7 @@ public class BetParametersCreationTests
         [Test]
         public void Converting_parameters_should_fail_due_to_malformed_bet_type() =>
             Assert.Throws<ArgumentException>(() => new BetParameters(F.Create<string>(),
+                F.Create<string>(),
                 "MALFORMED",
                 F.Create<decimal>().ToString(CultureInfo.InvariantCulture),
                 F.Create<double>().ToString(CultureInfo.InvariantCulture),
@@ -49,6 +53,7 @@ public class BetParametersCreationTests
             decimal amount)
         {
             Assert.Throws<ArgumentException>(() => new BetParameters(F.Create<string>(),
+                F.Create<string>(),
                 confusedBetType.ToString(),
                 F.Create<decimal>().ToString(CultureInfo.InvariantCulture),
                 F.Create<double>().ToString(CultureInfo.InvariantCulture),

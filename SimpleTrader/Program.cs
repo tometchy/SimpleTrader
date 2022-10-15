@@ -13,7 +13,8 @@ new SyncAppProcess(new AppBridge(Props.Create(() =>
                 Environment.GetEnvironmentVariable("KRAKEN_API_KEY_SECRET")!),
             LogLevel = LogLevel.Trace,
             RequestTimeout = TimeSpan.FromSeconds(20)
-        })), new BetParameters(Environment.GetEnvironmentVariable("CRYPTO_TICKER")!,
+        })), new BetParameters(Environment.GetEnvironmentVariable("UNIQUE_ID")!,
+            Environment.GetEnvironmentVariable("CRYPTO_TICKER")!,
             Environment.GetEnvironmentVariable("TYPE")!,
             Environment.GetEnvironmentVariable("INITIAL_PRICE_USD")!,
             Environment.GetEnvironmentVariable("THRESHOLD_PERCENT")!,

@@ -4,14 +4,16 @@ namespace SimpleTrader;
 
 public class BetParameters
 {
+    public string Id { get; }
     public string CryptoTicker { get; }
     public BetType Type { get; }
     public decimal InitialPriceUsd { get; }
     public double Threshold { get; }
     public double Amount { get; }
 
-    public BetParameters(string cryptoTicker, string betType, string initialPriceUsd, string threshold, string amount)
+    public BetParameters(string id, string cryptoTicker, string betType, string initialPriceUsd, string threshold, string amount)
     {
+        Id = id;
         CryptoTicker = cryptoTicker;
         Type = Enum.Parse<BetType>(betType);
         InitialPriceUsd = decimal.Parse(initialPriceUsd);
