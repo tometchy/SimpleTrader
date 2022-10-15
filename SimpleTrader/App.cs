@@ -1,8 +1,5 @@
-using System;
-using System.Linq;
 using Akka.Actor;
 using Akka.Event;
-using Kraken.Net.Clients;
 
 namespace SimpleTrader
 {
