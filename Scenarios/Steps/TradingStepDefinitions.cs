@@ -4,7 +4,7 @@ namespace Scenarios.Steps;
 public class TradingStepDefinitions
 {
     private const string Letters = "[a-zA-Z]*";
-    private const string Digits = @"?<=^| )\d+(\.\d+)?(?=$|";
+    private const string Digits = @"\d*\.?\d*";
 
     [Given(@$"the ({Letters}) price is ({Digits}) USD, I bet LONG with ({Digits})% threshold and bought for ({Digits}) USDC")]
     public void LongBetSetup(string ticker, decimal price, decimal threshold, decimal amount)
@@ -19,7 +19,7 @@ public class TradingStepDefinitions
     }
 
     [When(@$"the price goes to ({Digits}) USD")]
-    public void PriceChanging(int p0)
+    public void PriceChanging(decimal newPrice)
     {
         ScenarioContext.StepIsPending();
     }
