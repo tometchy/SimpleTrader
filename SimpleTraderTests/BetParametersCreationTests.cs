@@ -1,6 +1,7 @@
 using System.Globalization;
 using NUnit.Framework;
 using SimpleTrader;
+using TestsUtilities;
 using static SimpleTrader.BetParameters;
 using static SimpleTrader.BetParameters.BetType;
 

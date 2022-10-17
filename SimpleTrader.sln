@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleTraderTests", "Simple
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scenarios", "Scenarios\Scenarios.csproj", "{0498910D-265D-470B-80D9-19195C6EBAED}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestsUtilities", "TestsUtilities\TestsUtilities.csproj", "{11B11750-DFFE-47D4-884C-F9DBC2C7214A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{0498910D-265D-470B-80D9-19195C6EBAED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0498910D-265D-470B-80D9-19195C6EBAED}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0498910D-265D-470B-80D9-19195C6EBAED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{11B11750-DFFE-47D4-884C-F9DBC2C7214A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{11B11750-DFFE-47D4-884C-F9DBC2C7214A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{11B11750-DFFE-47D4-884C-F9DBC2C7214A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{11B11750-DFFE-47D4-884C-F9DBC2C7214A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
