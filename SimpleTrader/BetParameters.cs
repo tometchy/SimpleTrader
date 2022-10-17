@@ -9,9 +9,9 @@ public class BetParameters
     public string CryptoTicker { get; }
     public BetType Type { get; }
     public decimal InitialPriceUsd { get; }
-    public double Threshold { get; }
+    public decimal Threshold { get; }
     public TimeSpan PriceCheckInterval { get; set; }
-    public double Amount { get; }
+    public decimal Amount { get; }
 
     public BetParameters(string id, string cryptoTicker, string betType, string initialPriceUsd, string threshold,
         string priceCheckInterval, string amount)
@@ -20,9 +20,9 @@ public class BetParameters
         CryptoTicker = cryptoTicker;
         Type = Enum.Parse<BetType>(betType);
         InitialPriceUsd = decimal.Parse(initialPriceUsd);
-        Threshold = double.Parse(threshold);
+        Threshold = decimal.Parse(threshold);
         PriceCheckInterval = ParseString($"x = {priceCheckInterval}").GetTimeSpan("x");
-        Amount = double.Parse(amount);
+        Amount = decimal.Parse(amount);
 
         if (Type is Long && Amount < 5)
             throw new ArgumentException($"Detected wrong type of bet. " +

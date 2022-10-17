@@ -23,7 +23,6 @@ Scenario: LONG take profit
 Scenario: SHORT stop loss
 	Given the BTC price is 19600 USD, I bet SHORT with 3% threshold and sold 0.005
 	# I got 98 USDC
-	And the threshold is 3%
 	When the price goes to 20200 USD
 	# Above threshold
 	Then 98 USDC is sold for 0.004854368932039 BTC
@@ -32,7 +31,6 @@ Scenario: SHORT stop loss
 Scenario: SHORT take profit
 	Given the BTC price is 19600 USD, I bet SHORT with 3% threshold and sold 0.005
 	# I got 98 USDC
-	And the threshold is 3%
 	When the price goes to 19300 USD
 	And the price goes to 19100 USD
 	And the price goes to 18400 USD

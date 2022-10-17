@@ -20,9 +20,9 @@ public class BetParametersCreationTests
             var cryptoTicker = F.Create<string>();
             var betType = F.Create<BetType>();
             var initialPriceUsd = F.Create<decimal>();
-            var threshold = F.Create<double>();
+            var threshold = F.Create<decimal>();
             var interval = F.CreateTimeSpanRoundedToSeconds();
-            var amount = F.Create<double>();
+            var amount = F.Create<decimal>();
 
             var bet = new BetParameters(id,
                 cryptoTicker,
@@ -46,9 +46,9 @@ public class BetParametersCreationTests
                 F.Create<string>(),
                 "MALFORMED",
                 F.Create<decimal>().ToString(CultureInfo.InvariantCulture),
-                F.Create<double>().ToString(CultureInfo.InvariantCulture),
+                F.Create<decimal>().ToString(CultureInfo.InvariantCulture),
                 F.FormatTimeSpanToHoconFormat(F.CreateTimeSpanRoundedToSeconds()),
-                F.Create<double>().ToString(CultureInfo.InvariantCulture)));
+                F.Create<decimal>().ToString(CultureInfo.InvariantCulture)));
 
         [TestCase(Short, 100.0)]
         [TestCase(Long, 0.5)]
@@ -60,7 +60,7 @@ public class BetParametersCreationTests
                 F.Create<string>(),
                 confusedBetType.ToString(),
                 F.Create<decimal>().ToString(CultureInfo.InvariantCulture),
-                F.Create<double>().ToString(CultureInfo.InvariantCulture),
+                F.Create<decimal>().ToString(CultureInfo.InvariantCulture),
                 F.FormatTimeSpanToHoconFormat(F.CreateTimeSpanRoundedToSeconds()),
                 amount.ToString(CultureInfo.InvariantCulture)));
         }
