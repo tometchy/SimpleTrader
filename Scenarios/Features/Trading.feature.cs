@@ -101,7 +101,7 @@ this.ScenarioInitialize(scenarioInfo);
             {
                 this.ScenarioStart();
 #line 4
- testRunner.Given("the BTC price is 19600 USD, I bet LONG with 3% threshold and bought for 100 USDC", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+ testRunner.Given("BTC price is 19600 USD, LONG bet, 3% threshold and bought for 100 USDC", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
 #line 6
  testRunner.When("the price goes to 19000 USD", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
@@ -141,7 +141,7 @@ this.ScenarioInitialize(scenarioInfo);
             {
                 this.ScenarioStart();
 #line 12
- testRunner.Given("the BTC price is 19600 USD, I bet LONG with 3% threshold and bought for 100 USDC", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+ testRunner.Given("BTC price is 19600 USD, LONG bet, 3% threshold and bought for 100 USDC", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
 #line 14
  testRunner.When("the price goes to 19800 USD", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
@@ -193,7 +193,7 @@ this.ScenarioInitialize(scenarioInfo);
             {
                 this.ScenarioStart();
 #line 24
- testRunner.Given("the BTC price is 19600 USD, I bet SHORT with 3% threshold and sold 0.005", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+ testRunner.Given("BTC price is 19600 USD, SHORT bet, 3% threshold and sold 0.005", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
 #line 26
  testRunner.When("the price goes to 20200 USD", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
@@ -233,7 +233,7 @@ this.ScenarioInitialize(scenarioInfo);
             {
                 this.ScenarioStart();
 #line 32
- testRunner.Given("the BTC price is 19600 USD, I bet SHORT with 3% threshold and sold 0.005", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+ testRunner.Given("BTC price is 19600 USD, SHORT bet, 3% threshold and sold 0.005", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
 #line 34
  testRunner.When("the price goes to 19300 USD", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");

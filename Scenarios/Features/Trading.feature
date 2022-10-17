@@ -1,7 +1,7 @@
 ﻿Feature: Trading
 
 Scenario: LONG stop loss
-	Given the BTC price is 19600 USD, I bet LONG with 3% threshold and bought for 100 USDC
+	Given BTC price is 19600 USD, LONG bet, 3% threshold and bought for 100 USDC
 	# I got 0.005102040816327 BTC
 	When the price goes to 19000 USD
 	# Bellow threshold
@@ -9,7 +9,7 @@ Scenario: LONG stop loss
 	# Loss: 3USDC (3%)
 	
 Scenario: LONG take profit
-	Given the BTC price is 19600 USD, I bet LONG with 3% threshold and bought for 100 USDC
+	Given BTC price is 19600 USD, LONG bet, 3% threshold and bought for 100 USDC
 	# I got 0.005102040816327 BTC
 	When the price goes to 19800 USD
 	And the price goes to 20200 USD
@@ -21,7 +21,7 @@ Scenario: LONG take profit
 	# Profit: 5.1 USDC (5.1%), top observed price raise was 8.7%
 	
 Scenario: SHORT stop loss
-	Given the BTC price is 19600 USD, I bet SHORT with 3% threshold and sold 0.005
+	Given BTC price is 19600 USD, SHORT bet, 3% threshold and sold 0.005
 	# I got 98 USDC
 	When the price goes to 20200 USD
 	# Above threshold
@@ -29,7 +29,7 @@ Scenario: SHORT stop loss
 	# Loss: 0,000145631 BTC (3%)
 	
 Scenario: SHORT take profit
-	Given the BTC price is 19600 USD, I bet SHORT with 3% threshold and sold 0.005
+	Given BTC price is 19600 USD, SHORT bet, 3% threshold and sold 0.005
 	# I got 98 USDC
 	When the price goes to 19300 USD
 	And the price goes to 19100 USD
