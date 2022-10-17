@@ -13,6 +13,7 @@ services:
       TYPE: long
       INITIAL_PRICE_USD: 19000
       THRESHOLD_PERCENT: 5
+      PRICE_CHECK_INTERVAL: 38min
       LONG_FIAT_AMOUNT_SHORT_CRYPTO_AMOUNT: 10
       
 # Volumes to save in 2210152300.json file the smallest/biggest price and if it's closed or not

@@ -18,5 +18,6 @@ new SyncAppProcess(new AppBridge(Props.Create(() =>
             Environment.GetEnvironmentVariable("TYPE")!,
             Environment.GetEnvironmentVariable("INITIAL_PRICE_USD")!,
             Environment.GetEnvironmentVariable("THRESHOLD_PERCENT")!,
+            Environment.GetEnvironmentVariable("PRICE_CHECK_INTERVAL")!,
             Environment.GetEnvironmentVariable("LONG_FIAT_AMOUNT_SHORT_CRYPTO_AMOUNT")!)))))
     .StartAndWaitForTermination();

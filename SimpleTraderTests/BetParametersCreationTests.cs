@@ -19,21 +19,24 @@ public class BetParametersCreationTests
             var id = F.Create<string>();
             var cryptoTicker = F.Create<string>();
             var betType = F.Create<BetType>();
-            decimal initialPriceUsd = F.Create<decimal>();
-            double threshold = F.Create<double>();
-            double amount = F.Create<double>();
+            var initialPriceUsd = F.Create<decimal>();
+            var threshold = F.Create<double>();
+            var interval = F.CreateTimeSpanRoundedToSeconds();
+            var amount = F.Create<double>();
 
             var bet = new BetParameters(id,
                 cryptoTicker,
                 betType.ToString(),
                 initialPriceUsd.ToString(CultureInfo.InvariantCulture),
                 threshold.ToString(CultureInfo.InvariantCulture),
+                F.FormatTimeSpanToHoconFormat(interval),
                 amount.ToString(CultureInfo.InvariantCulture));
 
             Assert.That(bet.CryptoTicker, Is.EqualTo(cryptoTicker));
             Assert.That(bet.Type, Is.EqualTo(betType));
             Assert.That(bet.InitialPriceUsd, Is.EqualTo(initialPriceUsd));
             Assert.That(bet.Threshold, Is.EqualTo(threshold));
+            Assert.That(bet.PriceCheckInterval, Is.EqualTo(interval));
             Assert.That(bet.Amount, Is.EqualTo(amount));
         }
 
@@ -44,6 +47,7 @@ public class BetParametersCreationTests
                 "MALFORMED",
                 F.Create<decimal>().ToString(CultureInfo.InvariantCulture),
                 F.Create<double>().ToString(CultureInfo.InvariantCulture),
+                F.FormatTimeSpanToHoconFormat(F.CreateTimeSpanRoundedToSeconds()),
                 F.Create<double>().ToString(CultureInfo.InvariantCulture)));
 
         [TestCase(Short, 100.0)]
@@ -57,6 +61,7 @@ public class BetParametersCreationTests
                 confusedBetType.ToString(),
                 F.Create<decimal>().ToString(CultureInfo.InvariantCulture),
                 F.Create<double>().ToString(CultureInfo.InvariantCulture),
+                F.FormatTimeSpanToHoconFormat(F.CreateTimeSpanRoundedToSeconds()),
                 amount.ToString(CultureInfo.InvariantCulture)));
         }
     }
