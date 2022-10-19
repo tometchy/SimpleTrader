@@ -1,12 +1,10 @@
 using System.Globalization;
-using System.Reflection;
 using Akka.Actor;
-using Akka.TestKit.NUnit3;
+using Akka.TestKit;
 using Moq;
-using NLog;
-using NLog.Targets;
 using SimpleTrader;
 using TestsUtilities;
+using static System.TimeSpan;
 using static SimpleTrader.BetParameters;
 using static SimpleTrader.BetParameters.BetType;
 
@@ -19,7 +17,7 @@ public class TradingStepDefinitions : TestKitWithLog
     private readonly Queue<decimal> _fakePricesProvider = new();
     private const string Letters = "[a-zA-Z]*";
     private const string Digits = @"\d*\.?\d*";
-    private readonly TimeSpan _checkingPriceInterval = TimeSpan.FromSeconds(10);
+    private readonly TimeSpan _checkingPriceInterval = FromSeconds(10);
     private Mock<IKrakenClientAdapter> _krakenMock;
 
     [Given($"({Letters}) price is ({Digits}) USD, LONG bet, ({Digits})% threshold and bought for ({Digits}) USDC")]
@@ -47,15 +45,14 @@ public class TradingStepDefinitions : TestKitWithLog
     public void UpdatePrice(decimal newPrice)
     {
         _fakePricesProvider.Enqueue(newPrice);
-        // ToDo Być może tutaj przesuwać timer, żeby wybijał interval, tylko by go trzeba ustawić 
+        ((TestScheduler)Sys.Scheduler).Advance(FromMilliseconds(_checkingPriceInterval.TotalMilliseconds * 1.5));
     }
 
     [Then(@$"({Digits}) ({Letters}) is sold for ({Digits}) USDC")]
     public void CloseLongBet(decimal cryptoAmountToSell, string ticker, decimal dollarsAmountToGet)
     {
         _krakenMock.AsyncVerify(f => f.PublishLimitSellOrder(ticker, cryptoAmountToSell,
-                    dollarsAmountToGet / cryptoAmountToSell),
-                Times.Exactly(1), TimeSpan.FromSeconds(1))
+                dollarsAmountToGet / cryptoAmountToSell), Times.Exactly(1), FromSeconds(1))
             .Wait();
     }
 
