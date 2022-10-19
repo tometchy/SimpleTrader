@@ -1,7 +1,10 @@
 using System.Globalization;
+using System.Reflection;
 using Akka.Actor;
 using Akka.TestKit.NUnit3;
 using Moq;
+using NLog;
+using NLog.Targets;
 using SimpleTrader;
 using TestsUtilities;
 using static SimpleTrader.BetParameters;
@@ -10,11 +13,14 @@ using static SimpleTrader.BetParameters.BetType;
 namespace Scenarios.Steps;
 
 [Binding]
-public class TradingStepDefinitions : TestKit
+public class TradingStepDefinitions : TestKitWithLog
 {
     private IActorRef _app;
+    private readonly Queue<decimal> _fakePricesProvider = new();
     private const string Letters = "[a-zA-Z]*";
     private const string Digits = @"\d*\.?\d*";
+    private readonly TimeSpan _checkingPriceInterval = TimeSpan.FromSeconds(10);
+    private Mock<IKrakenClientAdapter> _krakenMock;
 
     [Given($"({Letters}) price is ({Digits}) USD, LONG bet, ({Digits})% threshold and bought for ({Digits}) USDC")]
     public void SetupLongBet(string ticker, decimal price, decimal threshold, decimal amount) =>
@@ -28,22 +34,29 @@ public class TradingStepDefinitions : TestKit
     {
         var bet = new BetParameters(F.Create<string>(), ticker, type.ToString(),
             price.ToString(CultureInfo.InvariantCulture),
-            threshold.ToString(CultureInfo.InvariantCulture), "1s",
+            threshold.ToString(CultureInfo.InvariantCulture), $"{_checkingPriceInterval.TotalSeconds}s",
             amount.ToString(CultureInfo.InvariantCulture));
-        
-        _app = Sys.ActorOf(Props.Create(() => new App(Mock.Of<IKrakenClientAdapter>(), bet)));
+
+        _krakenMock = new Mock<IKrakenClientAdapter>();
+        _fakePricesProvider.Enqueue(price);
+        _app = Sys.ActorOf(Props.Create(() => new App(_krakenMock.Object, bet)));
+        _krakenMock.Setup(client => client.GetAssetPrice(It.IsAny<string>())).Returns(_fakePricesProvider.Dequeue);
     }
 
     [When(@$"the price goes to ({Digits}) USD")]
     public void UpdatePrice(decimal newPrice)
     {
-        ScenarioContext.StepIsPending();
+        _fakePricesProvider.Enqueue(newPrice);
+        // ToDo Być może tutaj przesuwać timer, żeby wybijał interval, tylko by go trzeba ustawić 
     }
 
     [Then(@$"({Digits}) ({Letters}) is sold for ({Digits}) USDC")]
     public void CloseLongBet(decimal cryptoAmountToSell, string ticker, decimal dollarsAmountToGet)
     {
-        ScenarioContext.StepIsPending();
+        _krakenMock.AsyncVerify(f => f.PublishLimitSellOrder(ticker, cryptoAmountToSell,
+                    dollarsAmountToGet / cryptoAmountToSell),
+                Times.Exactly(1), TimeSpan.FromSeconds(1))
+            .Wait();
     }
 
     [Then(@$"({Digits}) USDC is sold for ({Digits}) ({Letters})")]
