@@ -1,5 +1,4 @@
 using Kraken.Net.Clients;
-using Kraken.Net.Enums;
 
 namespace SimpleTrader;
 
@@ -19,6 +18,15 @@ public class KrakenClientAdapter : IKrakenClientAdapter
     }
 
     public void PublishLimitSellOrder(string ticker, decimal cryptoAmountToSell, decimal expectedPrice)
+    {
+        // https://support.kraken.com/hc/en-us/sections/200577136-Order-types
+        // https://support.kraken.com/hc/en-us/articles/203325783-Market-and-limit-orders
+        
+        throw new NotImplementedException();
+        // _client.SpotApi.Trading.PlaceOrderAsync(,,OrderType.Limit)
+    }
+
+    public void PublishLimitBuyOrder(string ticker, decimal cryptoAmountToBuy, decimal expectedPrice)
     {
         // https://support.kraken.com/hc/en-us/sections/200577136-Order-types
         // https://support.kraken.com/hc/en-us/articles/203325783-Market-and-limit-orders

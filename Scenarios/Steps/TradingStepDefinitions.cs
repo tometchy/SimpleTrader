@@ -13,7 +13,6 @@ namespace Scenarios.Steps;
 [Binding]
 public class TradingStepDefinitions : TestKitWithLog
 {
-    private IActorRef _app;
     private readonly Queue<decimal> _fakePricesProvider = new();
     private const string Letters = "[a-zA-Z]*";
     private const string Digits = @"\d*\.?\d*";
@@ -37,8 +36,8 @@ public class TradingStepDefinitions : TestKitWithLog
 
         _krakenMock = new Mock<IKrakenClientAdapter>();
         _fakePricesProvider.Enqueue(price);
-        _app = Sys.ActorOf(Props.Create(() => new App(_krakenMock.Object, bet)));
         _krakenMock.Setup(client => client.GetAssetPrice(It.IsAny<string>())).Returns(_fakePricesProvider.Dequeue);
+        Sys.ActorOf(Props.Create(() => new App(_krakenMock.Object, bet)));
     }
 
     [When(@$"the price goes to ({Digits}) USD")]
@@ -49,16 +48,14 @@ public class TradingStepDefinitions : TestKitWithLog
     }
 
     [Then(@$"({Digits}) ({Letters}) is sold for ({Digits}) USDC")]
-    public void CloseLongBet(decimal cryptoAmountToSell, string ticker, decimal dollarsAmountToGet)
-    {
+    public void CloseLongBet(decimal cryptoAmountToSell, string ticker, decimal dollarsAmountToGet) =>
         _krakenMock.AsyncVerify(f => f.PublishLimitSellOrder(ticker, cryptoAmountToSell,
                 dollarsAmountToGet / cryptoAmountToSell), Times.Exactly(1), FromSeconds(1))
             .Wait();
-    }
 
     [Then(@$"({Digits}) USDC is sold for ({Digits}) ({Letters})")]
-    public void CloseShortBet(decimal dollarsAmountToSell, decimal cryptoAmountToGet, string ticker)
-    {
-        ScenarioContext.StepIsPending();
-    }
+    public void CloseShortBet(decimal dollarsAmountToSell, decimal cryptoAmountToGet, string ticker) =>
+        _krakenMock.AsyncVerify(f => f.PublishLimitBuyOrder(ticker, cryptoAmountToGet,
+                dollarsAmountToSell / cryptoAmountToGet), Times.Exactly(1), FromSeconds(1))
+            .Wait();
 }
