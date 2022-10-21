@@ -3,7 +3,6 @@ using NUnit.Framework;
 using SimpleTrader;
 using TestsUtilities;
 using static SimpleTrader.BetParameters;
-using static SimpleTrader.BetParameters.BetType;
 
 // ReSharper disable ObjectCreationAsStatement
 // ReSharper disable ClassNeverInstantiated.Global
@@ -38,7 +37,7 @@ public class BetParametersCreationTests
             Assert.That(bet.InitialPriceUsd, Is.EqualTo(initialPriceUsd));
             Assert.That(bet.Threshold, Is.EqualTo(threshold));
             Assert.That(bet.PriceCheckInterval, Is.EqualTo(interval));
-            Assert.That(bet.Amount, Is.EqualTo(amount));
+            Assert.That(bet.CryptoAmount, Is.EqualTo(amount));
         }
 
         [Test]
@@ -50,20 +49,5 @@ public class BetParametersCreationTests
                 F.Create<decimal>().ToString(CultureInfo.InvariantCulture),
                 F.FormatTimeSpanToHoconFormat(F.CreateTimeSpanRoundedToSeconds()),
                 F.Create<decimal>().ToString(CultureInfo.InvariantCulture)));
-
-        [TestCase(Short, 100.0)]
-        [TestCase(Long, 0.5)]
-        public void Converting_parameters_should_fail_due_to_long_with_short_confusion(
-            BetParameters.BetType confusedBetType,
-            decimal amount)
-        {
-            Assert.Throws<ArgumentException>(() => new BetParameters(F.Create<string>(),
-                F.Create<string>(),
-                confusedBetType.ToString(),
-                F.Create<decimal>().ToString(CultureInfo.InvariantCulture),
-                F.Create<decimal>().ToString(CultureInfo.InvariantCulture),
-                F.FormatTimeSpanToHoconFormat(F.CreateTimeSpanRoundedToSeconds()),
-                amount.ToString(CultureInfo.InvariantCulture)));
-        }
     }
 }

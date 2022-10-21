@@ -2,6 +2,7 @@ using System.Globalization;
 using Akka.Actor;
 using Akka.TestKit;
 using Moq;
+using Moq.Language;
 using SimpleTrader;
 using TestsUtilities;
 using static System.TimeSpan;
@@ -13,11 +14,11 @@ namespace Scenarios.Steps;
 [Binding]
 public class TradingStepDefinitions : TestKitWithLog
 {
-    private readonly Queue<decimal> _fakePricesProvider = new();
     private const string Letters = "[a-zA-Z]*";
     private const string Digits = @"\d*\.?\d*";
     private readonly TimeSpan _checkingPriceInterval = FromSeconds(10);
     private Mock<IKrakenClientAdapter> _krakenMock;
+    private ISetupSequentialResult<Task<decimal>> _fakePricesSequence;
 
     [Given($"({Letters}) price is ({Digits}) USD, LONG bet, ({Digits})% threshold and bought for ({Digits}) USDC")]
     public void SetupLongBet(string ticker, decimal price, decimal threshold, decimal amount) =>
@@ -35,15 +36,16 @@ public class TradingStepDefinitions : TestKitWithLog
             amount.ToString(CultureInfo.InvariantCulture));
 
         _krakenMock = new Mock<IKrakenClientAdapter>();
-        _fakePricesProvider.Enqueue(price);
-        _krakenMock.Setup(client => client.GetAssetPrice(It.IsAny<string>())).Returns(_fakePricesProvider.Dequeue);
+        _fakePricesSequence = _krakenMock
+            .SetupSequence(client => client.GetAssetPrice(It.IsAny<string>()))
+            .Returns(Task.FromResult(price));
         Sys.ActorOf(Props.Create(() => new App(_krakenMock.Object, bet)));
     }
 
     [When(@$"the price goes to ({Digits}) USD")]
     public void UpdatePrice(decimal newPrice)
     {
-        _fakePricesProvider.Enqueue(newPrice);
+        _fakePricesSequence.Returns(Task.FromResult(newPrice));
         ((TestScheduler)Sys.Scheduler).Advance(FromMilliseconds(_checkingPriceInterval.TotalMilliseconds * 1.5));
     }
 

@@ -1,5 +1,4 @@
 using static Akka.Configuration.ConfigurationFactory;
-using static SimpleTrader.BetParameters.BetType;
 
 namespace SimpleTrader;
 
@@ -10,31 +9,20 @@ public class BetParameters
     public BetType Type { get; }
     public decimal InitialPriceUsd { get; }
     public decimal Threshold { get; }
-    public TimeSpan PriceCheckInterval { get; set; }
-    public decimal Amount { get; }
+    public TimeSpan PriceCheckInterval { get; }
+    public decimal CryptoAmount { get; }
 
     public BetParameters(string id, string cryptoTicker, string betType, string initialPriceUsd, string threshold,
-        string priceCheckInterval, string amount)
+        string priceCheckInterval, string cryptoAmount)
     {
         Id = id;
         CryptoTicker = cryptoTicker;
         Type = Enum.Parse<BetType>(betType);
         InitialPriceUsd = decimal.Parse(initialPriceUsd);
         Threshold = decimal.Parse(threshold);
-        PriceCheckInterval = ParseString($"x = {priceCheckInterval}").GetTimeSpan("x");
-        Amount = decimal.Parse(amount);
-
-        if (Type is Long && Amount < 5)
-            throw new ArgumentException($"Detected wrong type of bet. " +
-                                        $"You declared that {cryptoTicker} price will raise and that you have spent" +
-                                        $"{Amount} dollars for it. It's too small to make sense.");
-
-        if (Type is Short && Amount > 5)
-            throw new ArgumentException($"Detected wrong type of bet. " +
-                                        $"You declared that {cryptoTicker} price will fall and that you have spent" +
-                                        $"{Amount} of it. It seems too much for this kind of simple trading.");
+        PriceCheckInterval = ParseString($"i = {priceCheckInterval}").GetTimeSpan("i");
+        CryptoAmount = decimal.Parse(cryptoAmount);
     }
-
 
     public enum BetType
     {

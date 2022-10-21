@@ -9,12 +9,12 @@ services:
     env_file: .env
     environment:
       UNIQUE_ID: 2210152300
-      CRYPTO_TICKER: btc
+      CRYPTO_TICKER: xbt
       TYPE: long
       INITIAL_PRICE_USD: 19000
-      THRESHOLD_PERCENT: 5
-      PRICE_CHECK_INTERVAL: 38min
-      LONG_FIAT_AMOUNT_SHORT_CRYPTO_AMOUNT: 10
+      THRESHOLD_PERCENT: 1
+      PRICE_CHECK_INTERVAL: 1m
+      CRYPTO_AMOUNT: 10
       
 # Volumes to save in 2210152300.json file the smallest/biggest price and if it's closed or not
 # FOR CLOSING IT SHOULD save what were parameters and approximately profit/loss in crypto or usd
