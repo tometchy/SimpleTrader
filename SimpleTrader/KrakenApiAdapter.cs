@@ -2,11 +2,11 @@ using Kraken.Net.Clients;
 
 namespace SimpleTrader;
 
-public class KrakenClientAdapter : IKrakenClientAdapter
+public class KrakenAdapter : IExchangeAdapter
 {
     private readonly KrakenClient _client;
 
-    public KrakenClientAdapter(KrakenClient client) => _client = client;
+    public KrakenAdapter(KrakenClient client) => _client = client;
     
     public async Task<decimal> GetAssetPrice(string ticker)
     {
@@ -17,7 +17,7 @@ public class KrakenClientAdapter : IKrakenClientAdapter
         return tickerData.Data.First().Value.LastTrade.Price;
     }
 
-    public async Task PublishLimitSellOrder(string ticker, decimal cryptoAmountToSell, decimal expectedPrice)
+    public async Task PublishLimitSellOrder(string cryptoTicker, string stableTicker, decimal amountToSell, decimal price)
     {
         // https://support.kraken.com/hc/en-us/sections/200577136-Order-types
         // https://support.kraken.com/hc/en-us/articles/203325783-Market-and-limit-orders
@@ -26,7 +26,7 @@ public class KrakenClientAdapter : IKrakenClientAdapter
         // _client.SpotApi.Trading.PlaceOrderAsync(,,OrderType.Limit)
     }
 
-    public async Task PublishLimitBuyOrder(string ticker, decimal cryptoAmountToBuy, decimal expectedPrice)
+    public async Task PublishLimitBuyOrder(string cryptoTicker, string stableTicker, decimal amountToBuy, decimal price)
     {
         // https://support.kraken.com/hc/en-us/sections/200577136-Order-types
         // https://support.kraken.com/hc/en-us/articles/203325783-Market-and-limit-orders

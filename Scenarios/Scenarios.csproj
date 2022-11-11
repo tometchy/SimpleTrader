@@ -29,4 +29,8 @@
       <ProjectReference Include="..\TestsUtilities\TestsUtilities.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Steps" />
+    </ItemGroup>
+
 </Project>
