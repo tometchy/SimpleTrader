@@ -2,6 +2,7 @@ using Akka.Actor;
 using CryptoExchange.Net.Objects;
 using CryptoExchange.Net.Sockets;
 using Kraken.Net.Clients;
+using SimpleTrader.Events;
 using static System.String;
 using static SimpleTrader.Ticker;
 

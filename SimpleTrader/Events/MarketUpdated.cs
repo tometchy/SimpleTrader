@@ -1,4 +1,4 @@
-namespace SimpleTrader;
+namespace SimpleTrader.Events;
 
 public class MarketUpdated
 {
