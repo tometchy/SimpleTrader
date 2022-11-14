@@ -6,6 +6,7 @@ using Kraken.Net.Clients;
 using Kraken.Net.Objects;
 using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
+var krakenSocketClient = new KrakenSocketClient();
 var krakenAdapter = new KrakenAdapter(new KrakenClient(new KrakenClientOptions
 {
     ApiCredentials = new ApiCredentials(Environment.GetEnvironmentVariable("KRAKEN_API_KEY")!,
@@ -15,5 +16,5 @@ var krakenAdapter = new KrakenAdapter(new KrakenClient(new KrakenClientOptions
 }));
 
 new SyncAppProcess(new AppBridge(Props.Create(() =>
-        new App(krakenAdapter, new ExchangeBridge(krakenAdapter)))))
+        new App(krakenSocketClient, krakenAdapter, new ExchangeBridge(krakenAdapter)))))
     .StartAndWaitForTermination();
