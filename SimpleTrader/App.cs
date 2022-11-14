@@ -1,5 +1,6 @@
 using Akka.Actor;
 using Akka.Event;
+using SimpleTrader.Events;
 using static System.TimeSpan;
 using static SimpleTrader.BetType;
 using static SimpleTrader.Ticker;
@@ -99,34 +100,6 @@ namespace SimpleTrader
                     Context.Parent.Tell(new TrendDetected(Short, _pricesAtMinInterval.Last()));
                 }
             });
-        }
-    }
-
-    public class TrendDetected
-    {
-        public BetType BetType { get; }
-        public decimal LastPrice { get; }
-
-        public TrendDetected(BetType betType, decimal lastPrice)
-        {
-            BetType = betType;
-            LastPrice = lastPrice;
-        }
-    }
-
-
-    public enum BetType
-    {
-        Long,
-        Short
-    }
-
-    public class TimerElapsed
-    {
-        public static TimerElapsed Instance { get; } = new TimerElapsed();
-
-        private TimerElapsed()
-        {
         }
     }
 }

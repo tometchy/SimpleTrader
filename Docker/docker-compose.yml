@@ -7,6 +7,8 @@ services:
       context: ..
       dockerfile: SimpleTrader/Dockerfile
     env_file: .env
+    volumes:
+      - /var/simple-trader:/results
 #    environment:
 #      UNIQUE_ID: 2210152300
 #      CRYPTO_TICKER: xbt
@@ -16,6 +18,5 @@ services:
 #      PRICE_CHECK_INTERVAL: 1m
 #      CRYPTO_AMOUNT: 10
       
-# Volumes to save in 2210152300.json file the smallest/biggest price and if it's closed or not
 # FOR CLOSING IT SHOULD save what were parameters and approximately profit/loss in crypto or usd
 # DO NOT START AGAIN ALREADY CLOSED BETS!
