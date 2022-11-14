@@ -7,4 +7,6 @@ public class BetOpened
     private BetOpened()
     {
     }
+
+    public override string ToString() => $"[{nameof(BetOpened)}]";
 }
