@@ -6,12 +6,14 @@ using Kraken.Net.Clients;
 using Kraken.Net.Objects;
 using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
+var krakenAdapter = new KrakenAdapter(new KrakenClient(new KrakenClientOptions
+{
+    ApiCredentials = new ApiCredentials(Environment.GetEnvironmentVariable("KRAKEN_API_KEY")!,
+        Environment.GetEnvironmentVariable("KRAKEN_API_KEY_SECRET")!),
+    LogLevel = LogLevel.Trace,
+    RequestTimeout = TimeSpan.FromSeconds(20)
+}));
+
 new SyncAppProcess(new AppBridge(Props.Create(() =>
-        new App(new KrakenAdapter(new KrakenClient(new KrakenClientOptions
-        {
-            ApiCredentials = new ApiCredentials(Environment.GetEnvironmentVariable("KRAKEN_API_KEY")!,
-                Environment.GetEnvironmentVariable("KRAKEN_API_KEY_SECRET")!),
-            LogLevel = LogLevel.Trace,
-            RequestTimeout = TimeSpan.FromSeconds(20)
-        }))))))
+        new App(krakenAdapter, new ExchangeBridge(krakenAdapter)))))
     .StartAndWaitForTermination();

@@ -17,12 +17,20 @@ public class KrakenAdapter : IExchangeAdapter
         return tickerData.Data.First().Value.LastTrade.Price;
     }
 
+    public Task<decimal> GetAssetAmount(string ticker)
+    {
+        if(ticker.ToLower() == "sol")
+            return Task.FromResult<decimal>(1000);
+        
+        return Task.FromResult<decimal>(10000);
+    }
+
     public async Task PublishLimitSellOrder(string cryptoTicker, string stableTicker, decimal amountToSell, decimal price)
     {
         // https://support.kraken.com/hc/en-us/sections/200577136-Order-types
         // https://support.kraken.com/hc/en-us/articles/203325783-Market-and-limit-orders
         
-        throw new NotImplementedException();
+        // throw new NotImplementedException();
         // _client.SpotApi.Trading.PlaceOrderAsync(,,OrderType.Limit)
     }
 
@@ -31,7 +39,18 @@ public class KrakenAdapter : IExchangeAdapter
         // https://support.kraken.com/hc/en-us/sections/200577136-Order-types
         // https://support.kraken.com/hc/en-us/articles/203325783-Market-and-limit-orders
         
-        throw new NotImplementedException();
+        // throw new NotImplementedException();
         // _client.SpotApi.Trading.PlaceOrderAsync(,,OrderType.Limit)
+    }
+
+    public async Task SellImmediately(string cryptoTicker, string stableTicker, decimal amountToSell)
+    {
+        // throw new NotImplementedException();
+        
+    }
+
+    public async Task BuyImmediately(string cryptoTicker, string stableTicker, decimal amountToBuy)
+    {
+        // throw new NotImplementedException();
     }
 }
