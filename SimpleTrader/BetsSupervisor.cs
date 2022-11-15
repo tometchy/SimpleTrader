@@ -1,5 +1,6 @@
 using Akka.Actor;
 using SimpleTrader.Events;
+using SimpleTrader.TrendDetectors;
 
 namespace SimpleTrader;
 

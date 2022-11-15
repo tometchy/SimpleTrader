@@ -1,5 +1,6 @@
 using Akka.Actor;
 using Akka.Event;
+using SimpleTrader.BetClosers;
 using SimpleTrader.Commands;
 using SimpleTrader.Events;
 using static System.TimeSpan;
@@ -44,13 +45,11 @@ public class Bet : ReceiveActor
             {
                 Context.GetLogger().Info($"{_trend.BetType} bet stop loss ({_trend.LastPrice}) crossed");
                 Self.Tell(new CloseBet(m.LastTradePrice));
-                numberOfClosingSimulators = 0;
             }
             else if (_trend.BetType == BetType.Short && m.LastTradePrice > _trend.LastPrice)
             {
                 Context.GetLogger().Info($"{_trend.BetType} bet stop loss ({_trend.LastPrice}) crossed");
                 Self.Tell(new CloseBet(m.LastTradePrice));
-                numberOfClosingSimulators = 0;
             }
             else
                 Context.ActorSelection("*").Tell(m, Sender);
@@ -74,8 +73,13 @@ public class Bet : ReceiveActor
             numberOfClosingSimulators++;
         }
 
-        void RemoveClosingSimulator() => numberOfClosingSimulators--;
-        bool CheckAllClosingSimulatorsAreRemoved() => numberOfClosingSimulators <= 0;
+        void RemoveClosingSimulator()
+        {
+            Sender.Tell(PoisonPill.Instance);
+            numberOfClosingSimulators--;
+        }
+
+        bool CheckAllClosingSimulatorsAreRemoved() => numberOfClosingSimulators == 0;
 
         void EnsureDataAvailabilityEvenWithRealtimeUpdatesProblems()
         {

@@ -2,7 +2,7 @@ using Akka.Actor;
 using Akka.Event;
 using SimpleTrader.Events;
 
-namespace SimpleTrader;
+namespace SimpleTrader.TrendDetectors;
 
 public class FixedPercentageFixedLookBackTrendDetector : ReceiveActor
 {
@@ -27,13 +27,13 @@ public class FixedPercentageFixedLookBackTrendDetector : ReceiveActor
                 if (old.Timestamp < theNewest.Timestamp - howLongToLookBack)
                     return;
 
-                if (theNewest.LastTradePrice > (old.LastTradePrice / 100) * (100 + percentageToCross))
+                if (theNewest.LastTradePrice > (old.LastTradePrice / 100m) * (100m + percentageToCross))
                 {
                     Context.GetLogger().Info($"LONG Bet detected: {theNewest.LastTradePrice} compared to {old.LastTradePrice}");
                     Context.Parent.Tell(new TrendDetected(theNewest.Timestamp, BetType.Long, theNewest.LastTradePrice, detectorId,
                         theNewest.PairTicker));
                 }
-                else if (theNewest.LastTradePrice < (old.LastTradePrice / 100) * (100 - percentageToCross))
+                else if (theNewest.LastTradePrice < (old.LastTradePrice / 100m) * (100m - percentageToCross))
                 {
                     Context.GetLogger().Info($"SHORT Bet detected: {theNewest.LastTradePrice} compared to {old.LastTradePrice}");
                     Context.Parent.Tell(new TrendDetected(theNewest.Timestamp, BetType.Short, theNewest.LastTradePrice, detectorId,
