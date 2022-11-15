@@ -13,6 +13,5 @@ public class MarketUpdated
         LastTradePrice = lastTradePrice;
     }
 
-    public override string ToString() =>
-        $"[{nameof(MarketUpdated)} >> {nameof(PairTicker)}: {PairTicker}, {nameof(Timestamp)}: {Timestamp}, {nameof(LastTradePrice)}: {LastTradePrice}]";
+    public override string ToString() => $"[{nameof(MarketUpdated)} >> {nameof(PairTicker)}: {PairTicker}, {nameof(Timestamp)}: {Timestamp}, {nameof(LastTradePrice)}: {LastTradePrice}]";
 }
