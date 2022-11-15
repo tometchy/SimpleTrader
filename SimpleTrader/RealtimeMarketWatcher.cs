@@ -1,4 +1,5 @@
 using Akka.Actor;
+using Akka.Event;
 using CryptoExchange.Net.Objects;
 using CryptoExchange.Net.Sockets;
 using Kraken.Net.Clients;
@@ -20,6 +21,7 @@ public class RealtimeMarketWatcher : ReceiveActor
 
         Receive<CallResult<UpdateSubscription>>(r =>
         {
+            Context.GetLogger().Info("Received websocket subscribe result");
             if (!r.Success)
                 throw new Exception($"Failed to create subscription: {r.Error?.Message}");
         });
