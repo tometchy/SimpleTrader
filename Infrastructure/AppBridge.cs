@@ -1,5 +1,6 @@
 using System.Reflection;
 using Akka.Actor;
+using Akka.Configuration;
 
 namespace Infrastructure
 {
@@ -11,7 +12,7 @@ namespace Infrastructure
         public AppBridge(Props appProps)
         {
             _appProps = appProps;
-            _system = ActorSystem.Create(CreateActorSystemName());
+            _system = ActorSystem.Create(CreateActorSystemName(), ConfigurationFactory.ParseString(File.ReadAllText("App.conf")));
         }
 
         public void Start() => _system.ActorOf(_appProps, "App");
