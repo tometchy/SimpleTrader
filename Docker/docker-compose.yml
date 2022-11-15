@@ -8,7 +8,7 @@ services:
       dockerfile: SimpleTrader/Dockerfile
     env_file: .env
     volumes:
-      - /var/simple-trader:/results
+      - /var/simple-trader:/var/simple-trader
 #    environment:
 #      UNIQUE_ID: 2210152300
 #      CRYPTO_TICKER: xbt

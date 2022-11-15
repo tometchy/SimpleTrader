@@ -14,6 +14,7 @@ public class Bet : ReceiveActor
     {
         _trend = trend;
         Become(OpeningBet);
+        File.AppendAllText(BetFilePath, $"TBD JAKI DETETOR TO WYKRYL CHYBA Z CTOR RPRZEKAZE {_trend}"); 
     }
 
     private void OpeningBet()
@@ -55,5 +56,7 @@ public class Bet : ReceiveActor
                 Self.Tell(PoisonPill.Instance);
             }
         });
+        
+        // private metoda zapisujaca z timestampem datetime now
     }
 }
