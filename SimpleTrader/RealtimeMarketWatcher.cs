@@ -15,7 +15,8 @@ public class RealtimeMarketWatcher : ReceiveActor
         var self = Self;
         kraken.SpotStreams.SubscribeToTickerUpdatesAsync($"{Crypto}/USD",
                 data => receiver.Tell(new MarketUpdated(data.Topic ?? Empty, data.Timestamp, data.Data.LastTrade.Price), self))
-            .ContinueWith(r => r.Result);
+            .ContinueWith(r => r.Result)
+            .PipeTo(Self);
 
         Receive<CallResult<UpdateSubscription>>(r =>
         {
