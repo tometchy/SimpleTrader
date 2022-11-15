@@ -5,7 +5,7 @@ namespace SimpleTrader;
 
 public class BetsSupervisor : ReceiveActor
 {
-    public BetsSupervisor()
+    public BetsSupervisor(IExchangeReader exchange)
     {
         Context.ActorOf(Props.Create(() => new FixedPercentageFixedLookBackTrendDetector(TimeSpan.FromMinutes(5), 1)),
             nameof(FixedPercentageFixedLookBackTrendDetector) + "_5_1");
@@ -28,6 +28,6 @@ public class BetsSupervisor : ReceiveActor
 
         Receive<MarketUpdated>(m => Context.ActorSelection("*").Tell(m, Sender));
 
-        Receive<TrendDetected>(t => { Context.ActorOf(Props.Create(() => new Bet(t)), nameof(Bet) + "_1"); });
+        Receive<TrendDetected>(t => Context.ActorOf(Props.Create(() => new Bet(t, exchange)), nameof(Bet) + $"_{t.Id}"));
     }
 }

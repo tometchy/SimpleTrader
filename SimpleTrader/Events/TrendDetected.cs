@@ -5,14 +5,18 @@ public class TrendDetected
     public DateTime Timestamp { get; }
     public BetType BetType { get; }
     public decimal LastPrice { get; }
-    public string Id => $"{Timestamp.ToString("yyyy-dd-M_HH-mm-ss")}_{BetType}_{LastPrice}";
+    public string DetectorId { get; }
+    public string PairTicker { get; }
+    public string Id => $"{Timestamp.ToString("yyyy-dd-M_HH-mm-ss")}_{PairTicker.Replace("/", "_")}_{BetType}_{LastPrice}_{DetectorId}";
 
-    public TrendDetected(DateTime timestamp, BetType betType, decimal lastPrice)
+    public TrendDetected(DateTime timestamp, BetType betType, decimal lastPrice, string detectorId, string pairTicker)
     {
         Timestamp = timestamp;
         BetType = betType;
         LastPrice = lastPrice;
+        DetectorId = detectorId;
+        PairTicker = pairTicker;
     }
 
-    public override string ToString() => $"[{nameof(TrendDetected)} >> {nameof(BetType)}: {BetType}, {nameof(LastPrice)}: {LastPrice}]";
+    public override string ToString() => $"[{nameof(TrendDetected)} >> {Id}]";
 }

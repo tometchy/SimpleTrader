@@ -8,12 +8,12 @@ public class KrakenAdapter : IExchangeAdapter
 
     public KrakenAdapter(KrakenClient client) => _client = client;
     
-    public async Task<decimal> GetAssetPrice(string ticker)
+    public async Task<decimal> GetAssetPrice(string pairTicker)
     {
         // https://support.kraken.com/hc/en-us/articles/203053216-Price-terminology
         // Last Traded Price is purely historical and is not the price that a market order will be executed at.
         // Note: I'm aware that I use last trade price, maybe will change that in the future.
-        var tickerData = await _client.SpotApi.ExchangeData.GetTickerAsync(ticker);
+        var tickerData = await _client.SpotApi.ExchangeData.GetTickerAsync(pairTicker);
         return tickerData.Data.First().Value.LastTrade.Price;
     }
 

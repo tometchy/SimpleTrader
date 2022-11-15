@@ -10,31 +10,34 @@ public class FixedPercentageFixedLookBackTrendDetector : ReceiveActor
 
     public FixedPercentageFixedLookBackTrendDetector(TimeSpan howLongToLookBack, decimal percentageToCross)
     {
-        Receive<MarketUpdated>(theNewestUpdate =>
+        var detectorId = $"{nameof(FixedPercentageFixedLookBackTrendDetector)}_{howLongToLookBack}_{percentageToCross}";
+        Receive<MarketUpdated>(theNewest =>
         {
-            Context.GetLogger().Info($"Received new price: {theNewestUpdate}");
-            _updates.Add(theNewestUpdate);
+            Context.GetLogger().Info($"Received new price: {theNewest}");
+            _updates.Add(theNewest);
 
-            if (_updates.First().Timestamp > theNewestUpdate.Timestamp - howLongToLookBack)
+            if (_updates.First().Timestamp > theNewest.Timestamp - howLongToLookBack)
             {
                 Context.GetLogger().Info($"Not enough updates for {howLongToLookBack} looking back");
                 return;
             }
 
-            foreach (var oldUpdate in _updates.AsEnumerable().Reverse().Skip(1))
+            foreach (var old in _updates.AsEnumerable().Reverse().Skip(1))
             {
-                if (oldUpdate.Timestamp < theNewestUpdate.Timestamp - howLongToLookBack)
+                if (old.Timestamp < theNewest.Timestamp - howLongToLookBack)
                     return;
 
-                if (theNewestUpdate.LastTradePrice > (oldUpdate.LastTradePrice / 100) * (100 + percentageToCross))
+                if (theNewest.LastTradePrice > (old.LastTradePrice / 100) * (100 + percentageToCross))
                 {
-                    Context.GetLogger().Info($"LONG Bet detected: {theNewestUpdate.LastTradePrice} compared to {oldUpdate.LastTradePrice}");
-                    Context.Parent.Tell(new TrendDetected(theNewestUpdate.Timestamp, BetType.Long, theNewestUpdate.LastTradePrice));
+                    Context.GetLogger().Info($"LONG Bet detected: {theNewest.LastTradePrice} compared to {old.LastTradePrice}");
+                    Context.Parent.Tell(new TrendDetected(theNewest.Timestamp, BetType.Long, theNewest.LastTradePrice, detectorId,
+                        theNewest.PairTicker));
                 }
-                else if (theNewestUpdate.LastTradePrice < (oldUpdate.LastTradePrice / 100) * (100 - percentageToCross))
+                else if (theNewest.LastTradePrice < (old.LastTradePrice / 100) * (100 - percentageToCross))
                 {
-                    Context.GetLogger().Info($"SHORT Bet detected: {theNewestUpdate.LastTradePrice} compared to {oldUpdate.LastTradePrice}");
-                    Context.Parent.Tell(new TrendDetected(theNewestUpdate.Timestamp, BetType.Short, theNewestUpdate.LastTradePrice));
+                    Context.GetLogger().Info($"SHORT Bet detected: {theNewest.LastTradePrice} compared to {old.LastTradePrice}");
+                    Context.Parent.Tell(new TrendDetected(theNewest.Timestamp, BetType.Short, theNewest.LastTradePrice, detectorId,
+                        theNewest.PairTicker));
                 }
             }
         });

@@ -8,14 +8,7 @@ namespace SimpleTrader
     {
         public App(KrakenSocketClient krakenSocketClient, IExchangeReader priceReader, IExchangeOrderMakerBridge orderMaker)
         {
-            CreateMarketWatcher(Context.ActorOf(Props.Create(() => new BetsSupervisor()), nameof(BetsSupervisor)));
-
-            // Context.System.Scheduler.ScheduleTellRepeatedly(Zero, FromMinutes(1), Self, TimerElapsed.Instance, Self);
-            // Receive<TimerElapsed>(_ =>
-            // priceReader.GetAssetPrice($"{Crypto}USD").ContinueWith(r => r.Result).PipeTo(Context.ActorSelection("*")));
-
-
-            // Receive<TrendDetected>(trend => Context.ActorOf(Props.Create(() => new FixedPercentageBetCloser(orderMaker, trend.BetType, trend.LastPrice))));
+            CreateMarketWatcher(Context.ActorOf(Props.Create(() => new BetsSupervisor(priceReader)), nameof(BetsSupervisor)));
 
             void CreateMarketWatcher(IActorRef marketUpdatesListener)
             {
@@ -24,7 +17,8 @@ namespace SimpleTrader
                     childName: nameof(RealtimeMarketWatcher),
                     minBackoff: TimeSpan.FromSeconds(3),
                     maxBackoff: TimeSpan.FromSeconds(30),
-                    randomFactor: 0.2));
+                    randomFactor: 0.2,
+                    maxNrOfRetries: -1));
                 Context.ActorOf(supervisor, $"{nameof(RealtimeMarketWatcher)}Supervisor");
             }
         }

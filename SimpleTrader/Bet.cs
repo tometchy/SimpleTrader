@@ -2,23 +2,26 @@ using Akka.Actor;
 using Akka.Event;
 using SimpleTrader.Commands;
 using SimpleTrader.Events;
+using static System.TimeSpan;
 
 namespace SimpleTrader;
 
 public class Bet : ReceiveActor
 {
     private readonly TrendDetected _trend;
-    private string BetFilePath => $"/var/simple-trader/{_trend.Id}.txt";
+    private readonly IExchangeReader _exchange;
 
-    public Bet(TrendDetected trend)
+    public Bet(TrendDetected trend, IExchangeReader exchange)
     {
+        Persist("Creating bet");
         _trend = trend;
+        _exchange = exchange;
         Become(OpeningBet);
-        File.AppendAllText(BetFilePath, $"TBD JAKI DETETOR TO WYKRYL CHYBA Z CTOR RPRZEKAZE {_trend}"); 
     }
 
     private void OpeningBet()
     {
+        Persist("Opening bet");
         Context.GetLogger().Info($"Opening bet for {_trend}");
         Self.Tell(BetOpened.Instance); // Exchange will do it
         Receive<BetOpened>(_ => Become(Opened));
@@ -26,37 +29,67 @@ public class Bet : ReceiveActor
 
     private void Opened()
     {
-        File.AppendAllText(BetFilePath, $"Bet opened {_trend}");
-        Context.GetLogger().Info($"Bet opened {_trend}");
+        Persist("Bet opened");
+        EnsureDataAvailabilityEvenWithRealtimeUpdatesProblems();
+
         var numberOfClosingSimulators = 0;
+        CreateClosingSimulator(Props.Create(() => new FixedPercentageBetCloser(_trend, 1)), nameof(FixedPercentageBetCloser) + "_1");
+        CreateClosingSimulator(Props.Create(() => new FixedPercentageBetCloser(_trend, 0.5m)), nameof(FixedPercentageBetCloser) + "_0.5");
+        CreateClosingSimulator(Props.Create(() => new FixedPercentageBetCloser(_trend, 1.5m)), nameof(FixedPercentageBetCloser) + "_1.5");
 
-        Context.ActorOf(Props.Create(() => new FixedPercentageBetCloser(_trend, 1)), nameof(FixedPercentageBetCloser) + "_1");
-        numberOfClosingSimulators++;
-        Context.ActorOf(Props.Create(() => new FixedPercentageBetCloser(_trend, 0.5m)), nameof(FixedPercentageBetCloser) + "_0.5");
-        numberOfClosingSimulators++;
-        Context.ActorOf(Props.Create(() => new FixedPercentageBetCloser(_trend, 1.5m)), nameof(FixedPercentageBetCloser) + "_1.5");
-        numberOfClosingSimulators++;
+        Receive<MarketUpdated>(m =>
+        {
+            // In real scenarios stoploss defined in order will be used
+            if (_trend.BetType == BetType.Long && m.LastTradePrice < _trend.LastPrice)
+            {
+                Context.GetLogger().Info($"{_trend.BetType} bet stop loss ({_trend.LastPrice}) crossed");
+                Self.Tell(new CloseBet(m.LastTradePrice));
+                numberOfClosingSimulators = 0;
+            }
+            else if (_trend.BetType == BetType.Short && m.LastTradePrice > _trend.LastPrice)
+            {
+                Context.GetLogger().Info($"{_trend.BetType} bet stop loss ({_trend.LastPrice}) crossed");
+                Self.Tell(new CloseBet(m.LastTradePrice));
+                numberOfClosingSimulators = 0;
+            }
+            else
+                Context.ActorSelection("*").Tell(m, Sender);
+        });
 
-        Receive<MarketUpdated>(m => Context.ActorSelection("*").Tell(m, Sender));
-
-        var numberOfClosedBets = 0;
         Receive<CloseBet>(c =>
         {
             var revenueInTheory = _trend.BetType == BetType.Long
                 ? $"{c.ClosingPrice * 100 / _trend.LastPrice - 100}%"
                 : $"{_trend.LastPrice * 100 / c.ClosingPrice - 100}%";
 
-            File.AppendAllText(BetFilePath, $"Closing {_trend} as {Sender.Path.ToString()} suggests; REVENUE IN THEORY: {revenueInTheory}");
-            Context.GetLogger().Info($"Closing {_trend} as {Sender.Path.ToString()} suggests; REVENUE IN THEORY: {revenueInTheory}");
-            numberOfClosedBets++;
+            Persist($"Closing bet as {Sender.Path} suggests; REVENUE IN THEORY: {revenueInTheory}");
+            RemoveClosingSimulator();
 
-            if (numberOfClosedBets == numberOfClosingSimulators)
-            {
-                Context.GetLogger().Info($"All ({numberOfClosingSimulators}) closing simulators did the job");
-                Self.Tell(PoisonPill.Instance);
-            }
+            if (CheckAllClosingSimulatorsAreRemoved()) Self.Tell(PoisonPill.Instance);
         });
-        
-        // private metoda zapisujaca z timestampem datetime now
+
+        void CreateClosingSimulator(Props simulatorProps, string simulatorName)
+        {
+            Context.ActorOf(simulatorProps, simulatorName);
+            numberOfClosingSimulators++;
+        }
+
+        void RemoveClosingSimulator() => numberOfClosingSimulators--;
+        bool CheckAllClosingSimulatorsAreRemoved() => numberOfClosingSimulators <= 0;
+
+        void EnsureDataAvailabilityEvenWithRealtimeUpdatesProblems()
+        {
+            Context.System.Scheduler.ScheduleTellRepeatedly(Zero, FromMinutes(1), Self, TimerElapsed.Instance, Self);
+            Receive<TimerElapsed>(_ => _exchange.GetAssetPrice(_trend.PairTicker)
+                .ContinueWith(r => new MarketUpdated(_trend.PairTicker, DateTime.UtcNow, r.Result))
+                .PipeTo(Self));
+        }
+    }
+
+    private void Persist(string text)
+    {
+        var message = $"{DateTime.UtcNow} [{_trend}] >> {text}";
+        Context.GetLogger().Info(message);
+        File.AppendAllText($"/var/simple-trader/{_trend.Id}.txt", message + "\n");
     }
 }
