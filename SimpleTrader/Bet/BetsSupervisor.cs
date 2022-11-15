@@ -1,8 +1,9 @@
 using Akka.Actor;
 using SimpleTrader.Events;
+using SimpleTrader.Exchange;
 using SimpleTrader.TrendDetectors;
 
-namespace SimpleTrader;
+namespace SimpleTrader.Bet;
 
 public class BetsSupervisor : ReceiveActor
 {

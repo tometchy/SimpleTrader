@@ -1,5 +1,6 @@
 using Akka.Actor;
 using Akka.Event;
+using SimpleTrader.Bet;
 using SimpleTrader.Events;
 
 namespace SimpleTrader.TrendDetectors;

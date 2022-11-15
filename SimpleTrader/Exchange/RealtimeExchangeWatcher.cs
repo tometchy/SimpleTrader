@@ -5,13 +5,13 @@ using CryptoExchange.Net.Sockets;
 using Kraken.Net.Clients;
 using SimpleTrader.Events;
 using static System.String;
-using static SimpleTrader.Ticker;
+using static SimpleTrader.Exchange.Ticker;
 
-namespace SimpleTrader;
+namespace SimpleTrader.Exchange;
 
-public class RealtimeMarketWatcher : ReceiveActor
+public class RealtimeExchangeWatcher : ReceiveActor
 {
-    public RealtimeMarketWatcher(KrakenSocketClient kraken, IActorRef receiver)
+    public RealtimeExchangeWatcher(KrakenSocketClient kraken, IActorRef receiver)
     {
         var lastUpdate = NullMarketUpdated.Instance;
         var self = Self;

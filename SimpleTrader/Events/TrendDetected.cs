@@ -1,3 +1,5 @@
+using SimpleTrader.Bet;
+
 namespace SimpleTrader.Events;
 
 public class TrendDetected

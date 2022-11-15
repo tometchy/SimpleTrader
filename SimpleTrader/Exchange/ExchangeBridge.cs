@@ -1,4 +1,4 @@
-namespace SimpleTrader;
+namespace SimpleTrader.Exchange;
 
 public class ExchangeBridge : IExchangeOrderMakerBridge
 {

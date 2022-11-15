@@ -1,6 +1,6 @@
 using Kraken.Net.Clients;
 
-namespace SimpleTrader;
+namespace SimpleTrader.Exchange;
 
 public class KrakenAdapter : IExchangeAdapter
 {

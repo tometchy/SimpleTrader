@@ -3,9 +3,10 @@ using Akka.Event;
 using SimpleTrader.BetClosers;
 using SimpleTrader.Commands;
 using SimpleTrader.Events;
+using SimpleTrader.Exchange;
 using static System.TimeSpan;
 
-namespace SimpleTrader;
+namespace SimpleTrader.Bet;
 
 public class Bet : ReceiveActor
 {

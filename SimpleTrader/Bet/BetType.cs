@@ -1,4 +1,4 @@
-namespace SimpleTrader;
+namespace SimpleTrader.Bet;
 
 public enum BetType
 {

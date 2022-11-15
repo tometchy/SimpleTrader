@@ -2,7 +2,7 @@ using Akka.Actor;
 using Akka.Event;
 using SimpleTrader.Commands;
 using SimpleTrader.Events;
-using static SimpleTrader.BetType;
+using static SimpleTrader.Bet.BetType;
 
 namespace SimpleTrader.BetClosers;
 

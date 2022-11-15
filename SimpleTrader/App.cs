@@ -1,6 +1,8 @@
 using Akka.Actor;
 using Akka.Pattern;
 using Kraken.Net.Clients;
+using SimpleTrader.Bet;
+using SimpleTrader.Exchange;
 
 namespace SimpleTrader
 {
@@ -12,14 +14,14 @@ namespace SimpleTrader
 
             void CreateMarketWatcher(IActorRef marketUpdatesListener)
             {
-                var childProps = Props.Create(() => new RealtimeMarketWatcher(krakenSocketClient, marketUpdatesListener));
+                var childProps = Props.Create(() => new RealtimeExchangeWatcher(krakenSocketClient, marketUpdatesListener));
                 var supervisor = BackoffSupervisor.Props(Backoff.OnFailure(childProps,
-                    childName: nameof(RealtimeMarketWatcher),
+                    childName: nameof(RealtimeExchangeWatcher),
                     minBackoff: TimeSpan.FromSeconds(3),
                     maxBackoff: TimeSpan.FromSeconds(30),
                     randomFactor: 0.2,
                     maxNrOfRetries: -1));
-                Context.ActorOf(supervisor, $"{nameof(RealtimeMarketWatcher)}Supervisor");
+                Context.ActorOf(supervisor, $"{nameof(RealtimeExchangeWatcher)}Supervisor");
             }
         }
     }

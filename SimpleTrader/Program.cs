@@ -4,6 +4,7 @@ using SimpleTrader;
 using CryptoExchange.Net.Authentication;
 using Kraken.Net.Clients;
 using Kraken.Net.Objects;
+using SimpleTrader.Exchange;
 using static System.String;
 using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
