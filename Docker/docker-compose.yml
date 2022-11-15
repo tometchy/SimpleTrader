@@ -1,7 +1,7 @@
 version: "3"
 
 services:
-  bet1:
+  simple-trader:
     restart: unless-stopped
     build:
       context: ..
@@ -17,6 +17,3 @@ services:
 #      THRESHOLD_PERCENT: 1
 #      PRICE_CHECK_INTERVAL: 1m
 #      CRYPTO_AMOUNT: 10
-      
-# FOR CLOSING IT SHOULD save what were parameters and approximately profit/loss in crypto or usd
-# DO NOT START AGAIN ALREADY CLOSED BETS!
