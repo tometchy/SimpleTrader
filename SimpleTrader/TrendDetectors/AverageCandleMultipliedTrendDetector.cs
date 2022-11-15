@@ -16,9 +16,7 @@ namespace SimpleTrader.TrendDetectors;
 //             Context.GetLogger().Debug($"Received new price: {theNewest}");
 //             _updates.Add(theNewest);
 //
-//             var firstTimestamp = _updates.First().Timestamp;
-//             var theNewestTimestampSubstracted = theNewest.Timestamp.Subtract(howLongToLookBack);
-//             if (firstTimestamp > theNewestTimestampSubstracted)
+            // if (_updates.First().Timestamp > theNewest.Timestamp.Subtract(howLongToLookBack))
 //             {
 //                 Context.GetLogger().Debug($"Not enough updates for {howLongToLookBack} looking back; " +
 //                                           $"First timestamp: {firstTimestamp}; " +

@@ -1,50 +1,62 @@
 using Akka.Actor;
 using Akka.Event;
+using SimpleTrader.Bet;
 using SimpleTrader.Events;
 
 namespace SimpleTrader.TrendDetectors;
 
-// public class RectangleMinMaxTrendDetector : ReceiveActor
-// {
-//     readonly List<MarketUpdated> _updates = new();
-//
-//     public RectangleMinMaxTrendDetector(TimeSpan howLongToLookBack, decimal howLongToSkipLastPricesFromRectangle, decimal howManyTimesRectangleMultiplied)
-//     {
-//         var detectorId = $"{nameof(RectangleMinMaxTrendDetector)}_{howLongToLookBack}_{howLongToSkipLastPricesFromRectangle}_{howManyTimesRectangleMultiplied}";
-//         Receive<MarketUpdated>(theNewest =>
-//         {
-//             Context.GetLogger().Debug($"Received new price: {theNewest}");
-//             _updates.Add(theNewest);
-//
-//             var firstTimestamp = _updates.First().Timestamp;
-//             var theNewestTimestampSubstracted = theNewest.Timestamp.Subtract(howLongToLookBack);
-//             if (firstTimestamp > theNewestTimestampSubstracted)
-//             {
-//                 Context.GetLogger().Debug($"Not enough updates for {howLongToLookBack} looking back; " +
-//                                           $"First timestamp: {firstTimestamp}; " +
-//                                           $"The newest timestamp: {theNewest.Timestamp}; " +
-//                                           $"The newest timestamp susbtracted: {theNewestTimestampSubstracted}");
-//                 return;
-//             }
-//
-//             foreach (var old in _updates.AsEnumerable().Reverse().Skip(1))
-//             {
-//                 if (old.Timestamp < theNewest.Timestamp - howLongToLookBack)
-//                     return;
-//
-//                 if (theNewest.LastTradePrice > old.LastTradePrice / 100m * (100m + percentageToCross))
-//                 {
-//                     Context.GetLogger().Info($"LONG Bet detected: {theNewest.LastTradePrice} compared to {old.LastTradePrice}");
-//                     Context.Parent.Tell(new TrendDetected(theNewest.Timestamp, BetType.Long, theNewest.LastTradePrice, detectorId,
-//                         theNewest.PairTicker));
-//                 }
-//                 else if (theNewest.LastTradePrice < old.LastTradePrice / 100m * (100m - percentageToCross))
-//                 {
-//                     Context.GetLogger().Info($"SHORT Bet detected: {theNewest.LastTradePrice} compared to {old.LastTradePrice}");
-//                     Context.Parent.Tell(new TrendDetected(theNewest.Timestamp, BetType.Short, theNewest.LastTradePrice, detectorId,
-//                         theNewest.PairTicker));
-//                 }
-//             }
-//         });
-//     }
-// }
+public class RectangleMinMaxTrendDetector : ReceiveActor
+{
+    readonly List<MarketUpdated> _updates = new();
+
+    public RectangleMinMaxTrendDetector(TimeSpan howLongToLookBack, TimeSpan howLongToSkipLastPricesFromRectangle,
+        decimal howManyTimesRectangleMultiplied)
+    {
+        var detectorId =
+            $"{nameof(RectangleMinMaxTrendDetector)}_{howLongToLookBack}_{howLongToSkipLastPricesFromRectangle}_{howManyTimesRectangleMultiplied}";
+        Receive<MarketUpdated>(theNewest =>
+        {
+            Context.GetLogger().Debug($"Received new price: {theNewest}");
+            _updates.Add(theNewest);
+
+            if (_updates.First().Timestamp > theNewest.Timestamp.Subtract(howLongToLookBack))
+            {
+                Context.GetLogger().Debug($"Not enough updates for {howLongToLookBack} looking back");
+                return;
+            }
+
+            var theLowestPriceInRectangle = 0m;
+            var theHighestPriceInRectangle = 0m;
+            foreach (var old in _updates.AsEnumerable()
+                         .Reverse()
+                         .SkipWhile(o => o.Timestamp > theNewest.Timestamp.Subtract(howLongToSkipLastPricesFromRectangle)))
+            {
+                if (old.Timestamp < theNewest.Timestamp.Subtract(howLongToLookBack))
+                    return;
+
+                if (old.LastTradePrice > theHighestPriceInRectangle)
+                    theHighestPriceInRectangle = old.LastTradePrice;
+                else if (old.LastTradePrice < theLowestPriceInRectangle)
+                    theLowestPriceInRectangle = old.LastTradePrice;
+            }
+
+            var rectangleHeight = theHighestPriceInRectangle - theLowestPriceInRectangle;
+            Context.GetLogger()
+                .Debug($"Rectangle height: {rectangleHeight}, the lowest price in rectangle: {theLowestPriceInRectangle}, " +
+                       $"the highest price in rectangle: {theHighestPriceInRectangle}");
+            
+            if (theNewest.LastTradePrice > theHighestPriceInRectangle + rectangleHeight * howManyTimesRectangleMultiplied)
+            {
+                Context.GetLogger().Info($"LONG Bet detected from {theNewest}");
+                Context.Parent.Tell(new TrendDetected(theNewest.Timestamp, BetType.Long, theNewest.LastTradePrice, detectorId,
+                    theNewest.PairTicker));
+            }
+            else if (theNewest.LastTradePrice < theLowestPriceInRectangle - rectangleHeight * howManyTimesRectangleMultiplied)
+            {
+                Context.GetLogger().Info($"SHORT Bet detected from {theNewest}");
+                Context.Parent.Tell(new TrendDetected(theNewest.Timestamp, BetType.Short, theNewest.LastTradePrice, detectorId,
+                    theNewest.PairTicker));
+            }
+        });
+    }
+}
