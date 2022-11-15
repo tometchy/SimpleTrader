@@ -16,9 +16,14 @@ public class FixedPercentageFixedLookBackTrendDetector : ReceiveActor
             Context.GetLogger().Debug($"Received new price: {theNewest}");
             _updates.Add(theNewest);
 
-            if (_updates.First().Timestamp > theNewest.Timestamp.Subtract(howLongToLookBack))
+            var firstTimestamp = _updates.First().Timestamp;
+            var theNewestTimestampSubstracted = theNewest.Timestamp.Subtract(howLongToLookBack);
+            if (firstTimestamp > theNewestTimestampSubstracted)
             {
-                Context.GetLogger().Debug($"Not enough updates for {howLongToLookBack} looking back");
+                Context.GetLogger().Debug($"Not enough updates for {howLongToLookBack} looking back; " +
+                                          $"First timestamp: {firstTimestamp}; " +
+                                          $"The newest timestamp: {theNewest.Timestamp}; " +
+                                          $"The newest timestamp susbtracted: {theNewestTimestampSubstracted}");
                 return;
             }
 
