@@ -11,6 +11,7 @@ public class Bet : ReceiveActor
 {
     private readonly TrendDetected _trend;
     private readonly IExchangeReader _exchange;
+    private ICancelable _scheduler;
 
     public Bet(TrendDetected trend, IExchangeReader exchange)
     {
@@ -58,8 +59,8 @@ public class Bet : ReceiveActor
         Receive<CloseBet>(c =>
         {
             var revenueInTheory = _trend.BetType == BetType.Long
-                ? $"{c.ClosingPrice * 100 / _trend.LastPrice - 100}%"
-                : $"{_trend.LastPrice * 100 / c.ClosingPrice - 100}%";
+                ? $"{c.ClosingPrice * 100m / _trend.LastPrice - 100m}%"
+                : $"{_trend.LastPrice * 100m / c.ClosingPrice - 100m}%";
 
             Persist($"Closing bet as {Sender.Path} suggests; REVENUE IN THEORY: {revenueInTheory}");
             RemoveClosingSimulator();
@@ -83,7 +84,7 @@ public class Bet : ReceiveActor
 
         void EnsureDataAvailabilityEvenWithRealtimeUpdatesProblems()
         {
-            Context.System.Scheduler.ScheduleTellRepeatedly(Zero, FromMinutes(1), Self, TimerElapsed.Instance, Self);
+            _scheduler = Context.System.Scheduler.ScheduleTellRepeatedlyCancelable(Zero, FromMinutes(1), Self, TimerElapsed.Instance, Self);
             Receive<TimerElapsed>(_ => _exchange.GetAssetPrice(_trend.PairTicker)
                 .ContinueWith(r => new MarketUpdated(_trend.PairTicker, DateTime.UtcNow, r.Result))
                 .PipeTo(Self));
@@ -95,5 +96,11 @@ public class Bet : ReceiveActor
         var message = $"{DateTime.UtcNow} [{_trend}] >> {text}";
         Context.GetLogger().Info(message);
         File.AppendAllText($"/var/simple-trader/{_trend.Id}.txt", message + "\n");
+    }
+
+    protected override void PostStop()
+    {
+        _scheduler.Cancel();
+        base.PostStop();
     }
 }
