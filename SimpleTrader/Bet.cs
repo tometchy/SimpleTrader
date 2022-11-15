@@ -14,9 +14,9 @@ public class Bet : ReceiveActor
 
     public Bet(TrendDetected trend, IExchangeReader exchange)
     {
-        Persist("Creating bet");
         _trend = trend;
         _exchange = exchange;
+        Persist("Creating bet");
         Become(OpeningBet);
     }
 
