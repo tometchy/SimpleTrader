@@ -12,6 +12,8 @@ public class FixedPercentageFixedLookBackTrendDetector : ReceiveActor
     public FixedPercentageFixedLookBackTrendDetector(TimeSpan howLongToLookBack, decimal percentageToCross)
     {
         var detectorId = $"{nameof(FixedPercentageFixedLookBackTrendDetector)}_{howLongToLookBack}_{percentageToCross}";
+        Context.GetLogger().Info($"Creating trend detector: {detectorId}");
+        
         Receive<MarketUpdated>(theNewest =>
         {
             Context.GetLogger().Debug($"Received new price: {theNewest}");
