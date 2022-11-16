@@ -20,8 +20,9 @@ var krakenClientOptions = IsNullOrWhiteSpace(krakenApiKey) || IsNullOrWhiteSpace
         LogLevel = LogLevel.Trace,
         RequestTimeout = TimeSpan.FromSeconds(20)
     };
-var krakenAdapter = new KrakenAdapter(new KrakenClient(krakenClientOptions));
+KrakenClient krakenRestClient = new KrakenClient(krakenClientOptions);
+var krakenAdapter = new KrakenAdapter(krakenRestClient);
 
 new SyncAppProcess(new AppBridge(Props.Create(() =>
-        new App(krakenSocketClient, krakenAdapter, new ExchangeBridge(krakenAdapter)))))
+        new App(krakenRestClient, krakenSocketClient, krakenAdapter, new ExchangeBridge(krakenAdapter)))))
     .StartAndWaitForTermination();

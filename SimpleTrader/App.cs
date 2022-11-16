@@ -9,13 +9,14 @@ namespace SimpleTrader
 {
     public class App : ReceiveActor
     {
-        public App(KrakenSocketClient krakenSocketClient, IExchangeReader priceReader, IExchangeOrderMakerBridge orderMaker)
+        public App(KrakenClient krakenRestClient, KrakenSocketClient krakenSocketClient, IExchangeReader priceReader,
+            IExchangeOrderMakerBridge orderMaker)
         {
             CreateMarketWatcher(Context.ActorOf(Props.Create(() => new BetsSupervisor(priceReader)), nameof(BetsSupervisor)));
 
             void CreateMarketWatcher(IActorRef marketUpdatesListener)
             {
-                var childProps = Props.Create(() => new RealtimeKrakenWatcher(krakenSocketClient, marketUpdatesListener));
+                var childProps = Props.Create(() => new RealtimeKrakenWatcher(krakenRestClient, krakenSocketClient, marketUpdatesListener));
                 var supervisor = BackoffSupervisor.Props(Backoff.OnFailure(childProps,
                     childName: nameof(RealtimeKrakenWatcher),
                     minBackoff: TimeSpan.FromSeconds(3),
