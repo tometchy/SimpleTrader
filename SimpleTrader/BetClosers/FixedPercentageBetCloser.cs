@@ -15,8 +15,6 @@ public class FixedPercentageBetCloser : ReceiveActor
         
         Receive<MarketUpdated>(update =>
         {
-            Context.GetLogger().Debug($"Received update: {update}");
-            
             if (update.LastTradePrice > theBiggestObservedPrice)
                 theBiggestObservedPrice = update.LastTradePrice;
             else if (update.LastTradePrice < theSmallestObservedPrice)

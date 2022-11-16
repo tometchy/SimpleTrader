@@ -9,9 +9,9 @@ using static SimpleTrader.Exchange.Ticker;
 
 namespace SimpleTrader.Exchange;
 
-public class RealtimeExchangeWatcher : ReceiveActor
+public class RealtimeKrakenWatcher : ReceiveActor
 {
-    public RealtimeExchangeWatcher(KrakenSocketClient kraken, IActorRef receiver)
+    public RealtimeKrakenWatcher(KrakenSocketClient kraken, IActorRef receiver)
     {
         var lastUpdate = NullMarketUpdated.Instance;
         var self = Self;
@@ -35,6 +35,5 @@ public class RealtimeExchangeWatcher : ReceiveActor
         });
     }
 
-    private static DateTime TrimMilliseconds(DateTime dt) =>
-        new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second, 0, dt.Kind);
+    private static DateTime TrimMilliseconds(DateTime dt) => new(dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second, 0, dt.Kind);
 }

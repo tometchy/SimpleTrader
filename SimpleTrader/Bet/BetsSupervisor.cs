@@ -1,4 +1,5 @@
 using Akka.Actor;
+using Akka.Event;
 using SimpleTrader.Events;
 using SimpleTrader.Exchange;
 using SimpleTrader.TrendDetectors;
@@ -94,7 +95,11 @@ public class BetsSupervisor : ReceiveActor
         Context.ActorOf(Props.Create(() => new RectangleMinMaxTrendDetector(FromMinutes(15), FromMinutes(3), 2m)),
             nameof(RectangleMinMaxTrendDetector) + "_15_3_2");
 
-        Receive<MarketUpdated>(m => Context.ActorSelection("*").Tell(m, Sender));
+        Receive<MarketUpdated>(m =>
+        {
+            Context.GetLogger().Debug($"Propagating market update: {m}");
+            Context.ActorSelection("*").Tell(m, Sender);
+        });
 
         Receive<TrendDetected>(t => Context.ActorOf(Props.Create(() => new Bet(t, exchange)), nameof(Bet) + $"_{t.Id}"));
     }

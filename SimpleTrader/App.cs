@@ -15,14 +15,14 @@ namespace SimpleTrader
 
             void CreateMarketWatcher(IActorRef marketUpdatesListener)
             {
-                var childProps = Props.Create(() => new RealtimeExchangeWatcher(krakenSocketClient, marketUpdatesListener));
+                var childProps = Props.Create(() => new RealtimeKrakenWatcher(krakenSocketClient, marketUpdatesListener));
                 var supervisor = BackoffSupervisor.Props(Backoff.OnFailure(childProps,
-                    childName: nameof(RealtimeExchangeWatcher),
+                    childName: nameof(RealtimeKrakenWatcher),
                     minBackoff: TimeSpan.FromSeconds(3),
                     maxBackoff: TimeSpan.FromSeconds(30),
                     randomFactor: 0.2,
                     maxNrOfRetries: -1));
-                Context.ActorOf(supervisor, $"{nameof(RealtimeExchangeWatcher)}Supervisor");
+                Context.ActorOf(supervisor, $"{nameof(RealtimeKrakenWatcher)}Supervisor");
             }
         }
 

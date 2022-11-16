@@ -12,18 +12,14 @@ public class RectangleMinMaxTrendDetector : ReceiveActor
     public RectangleMinMaxTrendDetector(TimeSpan howLongToLookBack, TimeSpan howLongToSkipLastPricesFromRectangle,
         decimal howManyTimesRectangleMultiplied)
     {
-        var detectorId =
-            $"{nameof(RectangleMinMaxTrendDetector)}_{howLongToLookBack}_{howLongToSkipLastPricesFromRectangle}_{howManyTimesRectangleMultiplied}";
+        Context.GetLogger().Info($"Creating trend detector: {Context.Self.Path.Name}");
+
         Receive<MarketUpdated>(theNewest =>
         {
-            Context.GetLogger().Debug($"Received new price: {theNewest}");
             _updates.Add(theNewest);
 
             if (_updates.First().Timestamp > theNewest.Timestamp.Subtract(howLongToLookBack))
-            {
-                Context.GetLogger().Debug($"Not enough updates for {howLongToLookBack} looking back");
                 return;
-            }
 
             var theLowestPriceInRectangle = 0m;
             var theHighestPriceInRectangle = 0m;
@@ -41,21 +37,27 @@ public class RectangleMinMaxTrendDetector : ReceiveActor
             }
 
             var rectangleHeight = theHighestPriceInRectangle - theLowestPriceInRectangle;
-            Context.GetLogger()
-                .Debug($"Rectangle height: {rectangleHeight}, the lowest price in rectangle: {theLowestPriceInRectangle}, " +
-                       $"the highest price in rectangle: {theHighestPriceInRectangle}");
-            
+
             if (theNewest.LastTradePrice > theHighestPriceInRectangle + rectangleHeight * howManyTimesRectangleMultiplied)
             {
-                Context.GetLogger().Info($"LONG Bet detected from {theNewest}");
-                Context.Parent.Tell(new TrendDetected(theNewest.Timestamp, BetType.Long, theNewest.LastTradePrice, detectorId,
+                Context.GetLogger()
+                    .Info($"LONG Bet detected from {theNewest}; Rectangle height: {rectangleHeight}, " +
+                          $"the lowest price in rectangle: {theLowestPriceInRectangle}, " +
+                          $"the highest price in rectangle: {theHighestPriceInRectangle}");
+                Context.Parent.Tell(new TrendDetected(theNewest.Timestamp, BetType.Long, theNewest.LastTradePrice, Context.Self.Path.Name,
                     theNewest.PairTicker));
+                return;
             }
-            else if (theNewest.LastTradePrice < theLowestPriceInRectangle - rectangleHeight * howManyTimesRectangleMultiplied)
+
+            if (theNewest.LastTradePrice < theLowestPriceInRectangle - rectangleHeight * howManyTimesRectangleMultiplied)
             {
-                Context.GetLogger().Info($"SHORT Bet detected from {theNewest}");
-                Context.Parent.Tell(new TrendDetected(theNewest.Timestamp, BetType.Short, theNewest.LastTradePrice, detectorId,
+                Context.GetLogger()
+                    .Info($"SHORT Bet detected from {theNewest}; Rectangle height: {rectangleHeight}, " +
+                          $"the lowest price in rectangle: {theLowestPriceInRectangle}, " +
+                          $"the highest price in rectangle: {theHighestPriceInRectangle}");
+                Context.Parent.Tell(new TrendDetected(theNewest.Timestamp, BetType.Short, theNewest.LastTradePrice, Context.Self.Path.Name,
                     theNewest.PairTicker));
+                return;
             }
         });
     }

@@ -11,19 +11,14 @@ public class FixedPercentageFixedLookBackTrendDetector : ReceiveActor
 
     public FixedPercentageFixedLookBackTrendDetector(TimeSpan howLongToLookBack, decimal percentageToCross)
     {
-        var detectorId = $"{nameof(FixedPercentageFixedLookBackTrendDetector)}_{howLongToLookBack}_{percentageToCross}";
-        Context.GetLogger().Info($"Creating trend detector: {detectorId}");
-        
+        Context.GetLogger().Info($"Creating trend detector: {Context.Self.Path.Name}");
+
         Receive<MarketUpdated>(theNewest =>
         {
-            Context.GetLogger().Debug($"Received new price: {theNewest}");
             _updates.Add(theNewest);
 
             if (_updates.First().Timestamp > theNewest.Timestamp.Subtract(howLongToLookBack))
-            {
-                Context.GetLogger().Debug($"Not enough updates for {howLongToLookBack} looking back");
                 return;
-            }
 
             foreach (var old in _updates.AsEnumerable().Reverse().Skip(1))
             {
@@ -33,14 +28,17 @@ public class FixedPercentageFixedLookBackTrendDetector : ReceiveActor
                 if (theNewest.LastTradePrice > old.LastTradePrice / 100m * (100m + percentageToCross))
                 {
                     Context.GetLogger().Info($"LONG Bet detected: {theNewest.LastTradePrice} compared to {old.LastTradePrice}");
-                    Context.Parent.Tell(new TrendDetected(theNewest.Timestamp, BetType.Long, theNewest.LastTradePrice, detectorId,
-                        theNewest.PairTicker));
+                    Context.Parent.Tell(new TrendDetected(theNewest.Timestamp, BetType.Long, theNewest.LastTradePrice,
+                        Context.Self.Path.Name, theNewest.PairTicker));
+                    return;
                 }
-                else if (theNewest.LastTradePrice < old.LastTradePrice / 100m * (100m - percentageToCross))
+
+                if (theNewest.LastTradePrice < old.LastTradePrice / 100m * (100m - percentageToCross))
                 {
                     Context.GetLogger().Info($"SHORT Bet detected: {theNewest.LastTradePrice} compared to {old.LastTradePrice}");
-                    Context.Parent.Tell(new TrendDetected(theNewest.Timestamp, BetType.Short, theNewest.LastTradePrice, detectorId,
-                        theNewest.PairTicker));
+                    Context.Parent.Tell(new TrendDetected(theNewest.Timestamp, BetType.Short, theNewest.LastTradePrice,
+                        Context.Self.Path.Name, theNewest.PairTicker));
+                    return;
                 }
             }
         });

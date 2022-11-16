@@ -9,7 +9,7 @@ public class TrendDetected
     public decimal LastPrice { get; }
     public string DetectorId { get; }
     public string PairTicker { get; }
-    public string Id => $"{Timestamp.ToString("yyyy-dd-M_HH-mm-ss")}_{PairTicker.Replace("/", "_")}_{BetType}_{LastPrice}_{DetectorId}";
+    public string Id => $"{Timestamp.ToString("yyyy-M-dd_HH-mm-ss")}_{PairTicker.Replace("/", "_")}_{BetType}_{LastPrice}_{DetectorId}";
 
     public TrendDetected(DateTime timestamp, BetType betType, decimal lastPrice, string detectorId, string pairTicker)
     {
