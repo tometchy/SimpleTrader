@@ -94,6 +94,27 @@ public class BetsSupervisor : ReceiveActor
             nameof(RectangleMinMaxTrendDetector) + "_15_3_1.75");
         Context.ActorOf(Props.Create(() => new RectangleMinMaxTrendDetector(FromMinutes(15), FromMinutes(3), 2m)),
             nameof(RectangleMinMaxTrendDetector) + "_15_3_2");
+        
+        Context.ActorOf(Props.Create(() => new FixedPercentageFixedLookBackTrendDetector(FromMinutes(1), 2m)),
+            nameof(FixedPercentageFixedLookBackTrendDetector) + "_1_2");
+        Context.ActorOf(Props.Create(() => new FixedPercentageFixedLookBackTrendDetector(FromMinutes(1), 2.25m)),
+            nameof(FixedPercentageFixedLookBackTrendDetector) + "_1_2.25");
+        Context.ActorOf(Props.Create(() => new FixedPercentageFixedLookBackTrendDetector(FromMinutes(1), 2.5m)),
+            nameof(FixedPercentageFixedLookBackTrendDetector) + "_1_2.5");
+        Context.ActorOf(Props.Create(() => new FixedPercentageFixedLookBackTrendDetector(FromMinutes(1), 1.5m)),
+            nameof(FixedPercentageFixedLookBackTrendDetector) + "_1_1.5");
+        Context.ActorOf(Props.Create(() => new FixedPercentageFixedLookBackTrendDetector(FromMinutes(1), 1.75m)),
+            nameof(FixedPercentageFixedLookBackTrendDetector) + "_1_1.75");
+        Context.ActorOf(Props.Create(() => new FixedPercentageFixedLookBackTrendDetector(FromMinutes(0.5), 2m)),
+            nameof(FixedPercentageFixedLookBackTrendDetector) + "_0.5_2");
+        Context.ActorOf(Props.Create(() => new FixedPercentageFixedLookBackTrendDetector(FromMinutes(0.5), 2.25m)),
+            nameof(FixedPercentageFixedLookBackTrendDetector) + "_0.5_2.25");
+        Context.ActorOf(Props.Create(() => new FixedPercentageFixedLookBackTrendDetector(FromMinutes(0.5), 2.5m)),
+            nameof(FixedPercentageFixedLookBackTrendDetector) + "_0.5_2.5");
+        Context.ActorOf(Props.Create(() => new FixedPercentageFixedLookBackTrendDetector(FromMinutes(0.5), 1.5m)),
+            nameof(FixedPercentageFixedLookBackTrendDetector) + "_0.5_1.5");
+        Context.ActorOf(Props.Create(() => new FixedPercentageFixedLookBackTrendDetector(FromMinutes(0.5), 1.75m)),
+            nameof(FixedPercentageFixedLookBackTrendDetector) + "_0.5_1.75");
 
         Receive<MarketUpdated>(m =>
         {
