@@ -26,7 +26,7 @@ public abstract class TestKitWithLog : TestKit
     }
         
     [AfterScenario]
-    // [TearDown]
+    [TearDown]
     // I don't know why both Console.WriteLine and TestContext.WriteLine works inside regular class, but not in Actors
     // so console output from NLog is not visible in test explorer. Maybe that is because of invocation from different thread?
     // That's why I was forced to use workaround with logging to memory collection first, then dumping it to output during tear down.
