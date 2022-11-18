@@ -19,7 +19,7 @@ public class RealtimeKrakenWatcher : ReceiveActor
         krakenSocketClient.SpotStreams.SubscribeToTickerUpdatesAsync($"{Crypto}/USD", data =>
             {
                 var newUpdate = new MarketUpdated(data.Topic ?? Empty, data.Timestamp, data.Data.LastTrade.Price);
-                if (!lastUpdate.Equals(newUpdate)) receiver.Tell(lastUpdate, self);
+                if (!lastUpdate.Equals(newUpdate)) receiver.Tell(newUpdate, self);
                 lastUpdate = newUpdate;
             })
             .ContinueWith(r => r.Result)
