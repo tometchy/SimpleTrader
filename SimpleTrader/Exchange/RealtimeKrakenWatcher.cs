@@ -6,6 +6,7 @@ using Kraken.Net.Clients;
 using Kraken.Net.Objects.Models;
 using SimpleTrader.Events;
 using static System.String;
+using static System.StringComparison;
 
 namespace SimpleTrader.Exchange;
 
@@ -19,7 +20,8 @@ public class RealtimeKrakenWatcher : ReceiveActor
 
         Receive<WebCallResult<Dictionary<string, KrakenSymbol>>>(r =>
         {
-            var tickersToSubscribe = new List<string>(r.Data.Values.Select(symbol => symbol.WebsocketName).Where(n => n.EndsWith("/USD")));
+            var tickersToSubscribe = new List<string>(r.Data.Values.Select(symbol => symbol.WebsocketName)
+                .Where(n => n.EndsWith("/USD") && !n.Contains("usdt", InvariantCultureIgnoreCase)));
             var lastUpdate = NullMarketUpdated.Instance;
             krakenSocketClient.SpotStreams.SubscribeToTickerUpdatesAsync(tickersToSubscribe, data =>
                 {
