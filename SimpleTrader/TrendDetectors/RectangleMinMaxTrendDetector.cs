@@ -18,12 +18,13 @@ public class RectangleMinMaxTrendDetector : ReceiveActor
         {
             _updates.Add(theNewest);
 
-            if (_updates.First().Timestamp > theNewest.Timestamp.Subtract(howLongToLookBack))
+            if (_updates.First(u => string.Equals(u.PairTicker, theNewest.PairTicker, StringComparison.InvariantCultureIgnoreCase))
+                    .Timestamp > theNewest.Timestamp.Subtract(howLongToLookBack))
                 return;
 
             var theLowestPriceInRectangle = 0m;
             var theHighestPriceInRectangle = 0m;
-            foreach (var old in _updates.AsEnumerable()
+            foreach (var old in _updates.Where(u => string.Equals(u.PairTicker, theNewest.PairTicker, StringComparison.InvariantCultureIgnoreCase))
                          .Reverse()
                          .SkipWhile(o => o.Timestamp > theNewest.Timestamp.Subtract(howLongToSkipLastPricesFromRectangle)))
             {

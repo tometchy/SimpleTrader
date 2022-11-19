@@ -17,10 +17,14 @@ public class FixedPercentageFixedLookBackTrendDetector : ReceiveActor
         {
             _updates.Add(theNewest);
 
-            if (_updates.First().Timestamp > theNewest.Timestamp.Subtract(howLongToLookBack))
+            if (_updates.First(u => string.Equals(u.PairTicker, theNewest.PairTicker, StringComparison.InvariantCultureIgnoreCase))
+                    .Timestamp > theNewest.Timestamp.Subtract(howLongToLookBack))
                 return;
 
-            foreach (var old in _updates.AsEnumerable().Reverse().Skip(1))
+            foreach (var old in _updates
+                         .Where(u => string.Equals(u.PairTicker, theNewest.PairTicker, StringComparison.InvariantCultureIgnoreCase))
+                         .Reverse()
+                         .Skip(1))
             {
                 if (old.Timestamp < theNewest.Timestamp.Subtract(howLongToLookBack))
                     return;

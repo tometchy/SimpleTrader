@@ -42,6 +42,9 @@ public class Bet : ReceiveActor
 
         Receive<MarketUpdated>(m =>
         {
+            if(!string.Equals(m.PairTicker, _trend.PairTicker, StringComparison.InvariantCultureIgnoreCase))
+                return;
+            
             // In real scenarios stoploss defined in order will be used
             if (_trend.BetType == BetType.Long && m.LastTradePrice < _trend.LastPrice)
             {
