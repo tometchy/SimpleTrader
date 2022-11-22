@@ -76,21 +76,14 @@ public class BetsSupervisor : ReceiveActor
         Context.ActorOf(Props.Create(() => new RectangleMinMaxTrendDetector(FromMinutes(15), FromMinutes(3), 2m)),
             nameof(RectangleMinMaxTrendDetector) + "_15_3_2");
 
-        CreateFixedPercentageFixedLookBackTrendDetector(FromMinutes(2), 3m);
-        CreateFixedPercentageFixedLookBackTrendDetector(FromMinutes(2), 3.25m);
-        CreateFixedPercentageFixedLookBackTrendDetector(FromMinutes(2), 3.5m);
-        CreateFixedPercentageFixedLookBackTrendDetector(FromMinutes(2), 4.5m);
-        CreateFixedPercentageFixedLookBackTrendDetector(FromMinutes(2), 4.75m);
-        CreateFixedPercentageFixedLookBackTrendDetector(FromMinutes(1), 3m);
-        CreateFixedPercentageFixedLookBackTrendDetector(FromMinutes(1), 3.25m);
-        CreateFixedPercentageFixedLookBackTrendDetector(FromMinutes(1), 3.5m);
-        CreateFixedPercentageFixedLookBackTrendDetector(FromMinutes(1), 4.5m);
-        CreateFixedPercentageFixedLookBackTrendDetector(FromMinutes(1), 4.75m);
-        CreateFixedPercentageFixedLookBackTrendDetector(FromMinutes(0.5), 3m);
-        CreateFixedPercentageFixedLookBackTrendDetector(FromMinutes(0.5), 3.25m);
-        CreateFixedPercentageFixedLookBackTrendDetector(FromMinutes(0.5), 3.5m);
-        CreateFixedPercentageFixedLookBackTrendDetector(FromMinutes(0.5), 4.5m);
         CreateFixedPercentageFixedLookBackTrendDetector(FromMinutes(0.5), 4.75m);
+        CreateFixedPercentageFixedLookBackTrendDetector(FromMinutes(1), 4.75m);
+        CreateFixedPercentageFixedLookBackTrendDetector(FromMinutes(2), 4.75m);
+        CreateFixedPercentageFixedLookBackTrendDetector(FromMinutes(10), 4.75m);
+        CreateFixedPercentageFixedLookBackTrendDetector(FromMinutes(18), 4.75m);
+        CreateFixedPercentageFixedLookBackTrendDetector(FromMinutes(32), 4.75m);
+        CreateFixedPercentageFixedLookBackTrendDetector(FromMinutes(58), 4.75m);
+        CreateFixedPercentageFixedLookBackTrendDetector(FromMinutes(61), 4.75m);
 
         void CreateFixedPercentageFixedLookBackTrendDetector(TimeSpan howLongToLookBack, decimal percentageToCross) =>
             Context.ActorOf(Props.Create(() => new FixedPercentageFixedLookBackTrendDetector(howLongToLookBack, percentageToCross)),
