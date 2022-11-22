@@ -13,6 +13,7 @@ public class Bet : ReceiveActor
     private readonly TrendDetected _trend;
     private readonly IExchangeReader _exchange;
     private ICancelable _scheduler;
+    private readonly TimeSpan _stabilizePeriod = FromMinutes(1);
 
     public Bet(TrendDetected trend, IExchangeReader exchange)
     {
@@ -24,9 +25,9 @@ public class Bet : ReceiveActor
 
     private void OpeningBet()
     {
-        Persist("Opening bet");
-        Context.GetLogger().Info($"Opening bet for {_trend}");
-        Self.Tell(BetOpened.Instance); // Exchange will do it
+        Persist($"Opening bet, stabilize time: {_stabilizePeriod}");
+        Context.System.Scheduler.ScheduleTellOnce(_stabilizePeriod, Self, BetOpened.Instance, Self);
+        // Exchange will be used somewhere here
         Receive<BetOpened>(_ => Become(Opened));
     }
 
