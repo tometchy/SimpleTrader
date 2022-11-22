@@ -79,15 +79,29 @@ public class BetsSupervisor : ReceiveActor
         CreateFixedPercentageFixedLookBackTrendDetector(FromMinutes(0.5), 4.75m);
         CreateFixedPercentageFixedLookBackTrendDetector(FromMinutes(1), 4.75m);
         CreateFixedPercentageFixedLookBackTrendDetector(FromMinutes(2), 4.75m);
-        CreateFixedPercentageFixedLookBackTrendDetector(FromMinutes(10), 4.75m);
-        CreateFixedPercentageFixedLookBackTrendDetector(FromMinutes(18), 4.75m);
-        CreateFixedPercentageFixedLookBackTrendDetector(FromMinutes(32), 4.75m);
-        CreateFixedPercentageFixedLookBackTrendDetector(FromMinutes(58), 4.75m);
-        CreateFixedPercentageFixedLookBackTrendDetector(FromMinutes(61), 4.75m);
+        CreateFixedPercentageFixedLookBackTrendDetector(FromMinutes(2), 7.77m);
+
+        CreateExtraFixedPercentageFixedLookBackTrendDetector(FromMinutes(1), 3.75m, FromMinutes(20));
+        CreateExtraFixedPercentageFixedLookBackTrendDetector(FromMinutes(1), 2.75m, FromMinutes(60));
+        CreateExtraFixedPercentageFixedLookBackTrendDetector(FromMinutes(1), 2.75m, FromMinutes(90));
+        CreateExtraFixedPercentageFixedLookBackTrendDetector(FromMinutes(1), 2.75m, FromHours(2));
+        CreateExtraFixedPercentageFixedLookBackTrendDetector(FromMinutes(1), 2.75m, FromHours(4));
+
+        CreateExtraFixedPercentageFixedLookBackTrendDetector(FromMinutes(4), 4.75m, FromHours(4));
+        CreateExtraFixedPercentageFixedLookBackTrendDetector(FromMinutes(4), 5.75m, FromHours(4));
+        CreateExtraFixedPercentageFixedLookBackTrendDetector(FromMinutes(7), 7.77m, FromHours(7));
 
         void CreateFixedPercentageFixedLookBackTrendDetector(TimeSpan howLongToLookBack, decimal percentageToCross) =>
             Context.ActorOf(Props.Create(() => new FixedPercentageFixedLookBackTrendDetector(howLongToLookBack, percentageToCross)),
                 nameof(FixedPercentageFixedLookBackTrendDetector) + $"_{howLongToLookBack}_{percentageToCross}");
+
+        void CreateExtraFixedPercentageFixedLookBackTrendDetector(TimeSpan howLongToLookBack, decimal percentageToCross,
+            TimeSpan howLongPriceNotSeenBefore) =>
+            Context.ActorOf(
+                Props.Create(() =>
+                    new ExtraFixedPercentageFixedLookBackTrendDetector(howLongToLookBack, percentageToCross, howLongPriceNotSeenBefore)),
+                nameof(ExtraFixedPercentageFixedLookBackTrendDetector) +
+                $"_{howLongToLookBack}_{percentageToCross}_{howLongPriceNotSeenBefore}");
 
         Receive<MarketUpdated>(m =>
         {
