@@ -4,7 +4,7 @@ using SendGrid.Helpers.Mail;
 
 namespace SimpleTrader.Bet;
 
-public static class MailSender
+public static class SendgridMailSender
 {
     private static readonly string SendgridKey = Environment.GetEnvironmentVariable("SENDGRID_KEY") ?? throw new Exception("Missing SENDGRID_KEY environment variable");
     private static readonly string FromAddress = Environment.GetEnvironmentVariable("MAIL_FROM") ?? throw new ConfigurationException("Missing MAIL_FROM environment variable");
