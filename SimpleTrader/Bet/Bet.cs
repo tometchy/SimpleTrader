@@ -20,7 +20,7 @@ public class Bet : ReceiveActor
         _trend = trend;
         _exchange = exchange;
         Persist("Creating bet");
-        SendInBlueMailSender.Send($"{trend.PairTicker} {trend.BetType} {trend.LastPrice} {trend.Timestamp}",$"{DateTime.UtcNow} >> [{_trend}]");
+        ListPublisher.Publish($"{DateTime.UtcNow} >> [{_trend}]");
         Become(OpeningBet);
     }
 
