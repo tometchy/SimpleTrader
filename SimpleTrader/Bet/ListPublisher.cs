@@ -12,8 +12,8 @@ public static class ListPublisher
             File.WriteAllText(ListFilePath, @$"
 <!DOCTYPE html>
 <html>
+<head><META NAME=""robots"" CONTENT=""noindex,nofollow""></head>
 <body>
-NOFOLLOW!!!!!!!!!!!!!!!!!!!!
 
 <ul>
 {ADD_HERE_COMMENT}
