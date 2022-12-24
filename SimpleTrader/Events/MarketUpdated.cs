@@ -5,16 +5,18 @@ public class MarketUpdated : IEquatable<MarketUpdated>
     public string PairTicker { get; }
     public DateTime Timestamp { get; }
     public decimal LastTradePrice { get; }
+    public decimal LastTradeQuantity { get; }
 
-    public MarketUpdated(string pairTicker, DateTime timestamp, decimal lastTradePrice)
+    public MarketUpdated(string pairTicker, DateTime timestamp, decimal lastTradePrice, decimal lastTradeQuantity)
     {
         PairTicker = pairTicker;
         Timestamp = TrimMilliseconds(timestamp);
         LastTradePrice = lastTradePrice;
+        LastTradeQuantity = lastTradeQuantity;
     }
 
     public override string ToString() =>
-        $"[{nameof(MarketUpdated)} >> {nameof(PairTicker)}: {PairTicker}, {nameof(Timestamp)}: {Timestamp}, {nameof(LastTradePrice)}: {LastTradePrice}]";
+        $"[{nameof(MarketUpdated)} >> {nameof(PairTicker)}: {PairTicker}, {nameof(Timestamp)}: {Timestamp}, {nameof(LastTradePrice)}: {LastTradePrice}, {nameof(LastTradeQuantity)}: {LastTradeQuantity}]";
 
     public bool Equals(MarketUpdated? other)
     {

@@ -25,7 +25,7 @@ public class RealtimeKrakenWatcher : ReceiveActor
             var lastUpdate = NullMarketUpdated.Instance;
             krakenSocketClient.SpotStreams.SubscribeToTickerUpdatesAsync(tickersToSubscribe, data =>
                 {
-                    var newUpdate = new MarketUpdated(data.Topic ?? Empty, data.Timestamp, data.Data.LastTrade.Price);
+                    var newUpdate = new MarketUpdated(data.Topic ?? Empty, data.Timestamp, data.Data.LastTrade.Price, data.Data.LastTrade.Quantity);
                     if (!lastUpdate.Equals(newUpdate)) receiver.Tell(newUpdate, self);
                     lastUpdate = newUpdate;
                 })

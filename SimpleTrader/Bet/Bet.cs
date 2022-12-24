@@ -91,8 +91,8 @@ public class Bet : ReceiveActor
         void EnsureDataAvailabilityEvenWithRealtimeUpdatesProblems()
         {
             _scheduler = Context.System.Scheduler.ScheduleTellRepeatedlyCancelable(Zero, FromMinutes(1), Self, TimerElapsed.Instance, Self);
-            Receive<TimerElapsed>(_ => _exchange.GetAssetPrice(_trend.PairTicker)
-                .ContinueWith(r => new MarketUpdated(_trend.PairTicker, DateTime.UtcNow, r.Result))
+            Receive<TimerElapsed>(_ => _exchange.GetLastTradeData(_trend.PairTicker)
+                .ContinueWith(r => new MarketUpdated(_trend.PairTicker, DateTime.UtcNow, r.Result.Price, r.Result.Quantity))
                 .PipeTo(Self));
         }
     }

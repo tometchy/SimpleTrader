@@ -2,6 +2,6 @@ namespace SimpleTrader.Exchange;
 
 public interface IExchangeReader
 {
-    Task<decimal> GetAssetPrice(string pairTicker);
+    Task<LastTradeData> GetLastTradeData(string pairTicker);
     Task<decimal> GetAssetAmount(string ticker);
 }
