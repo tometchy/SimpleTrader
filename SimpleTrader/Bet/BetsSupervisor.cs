@@ -109,6 +109,10 @@ public class BetsSupervisor : ReceiveActor
             Context.ActorSelection("*").Tell(m, Sender);
         });
 
-        Receive<TrendDetected>(t => Context.ActorOf(Props.Create(() => new Bet(t, exchange)), nameof(Bet) + $"_{t.Id}"));
+        Receive<TrendDetected>(t =>
+        {
+            ListPublisher.Publish($"{DateTime.UtcNow} >> [{t}]");
+            // Context.ActorOf(Props.Create(() => new Bet(t, exchange)), nameof(Bet) + $"_{t.Id}");
+        });
     }
 }

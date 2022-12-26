@@ -20,7 +20,6 @@ public class Bet : ReceiveActor
         _trend = trend;
         _exchange = exchange;
         Persist("Creating bet");
-        ListPublisher.Publish($"{DateTime.UtcNow} >> [{_trend}]");
         Become(OpeningBet);
     }
 
