@@ -2,6 +2,7 @@ namespace SimpleTrader.Events;
 
 public class MarketUpdated : IEquatable<MarketUpdated>
 {
+    public string Exchange { get; }
     public string PairTicker { get; }
     public DateTime Timestamp { get; }
     public decimal LastTradePrice { get; }
@@ -9,8 +10,9 @@ public class MarketUpdated : IEquatable<MarketUpdated>
 
     public MarketUpdated(string pairTicker, DateTime timestamp, decimal lastTradePrice, decimal lastTradeQuantity)
     {
+        Exchange = "Kraken";
         PairTicker = pairTicker;
-        Timestamp = TrimMilliseconds(timestamp);
+        Timestamp = timestamp;
         LastTradePrice = lastTradePrice;
         LastTradeQuantity = lastTradeQuantity;
     }
@@ -35,6 +37,4 @@ public class MarketUpdated : IEquatable<MarketUpdated>
     }
 
     public override int GetHashCode() => HashCode.Combine(PairTicker, Timestamp, LastTradePrice);
-
-    private static DateTime TrimMilliseconds(DateTime dt) => new(dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second, 0, dt.Kind);
 }

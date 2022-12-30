@@ -107,6 +107,7 @@ public class BetsSupervisor : ReceiveActor
         {
             Context.GetLogger().Debug($"Propagating market update: {m}");
             Context.ActorSelection("*").Tell(m, Sender);
+            ChartPublisher.Publish(m);
         });
 
         Receive<TrendDetected>(t =>
