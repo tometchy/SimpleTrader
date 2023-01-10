@@ -1,4 +1,4 @@
-using SimpleTrader.Events;
+using SimpleTrader.Exchange;
 
 namespace SimpleTrader.Bet;
 

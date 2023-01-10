@@ -9,14 +9,13 @@ namespace SimpleTrader
 {
     public class App : ReceiveActor
     {
-        public App(KrakenClient krakenRestClient, KrakenSocketClient krakenSocketClient, IExchangeReader priceReader,
-            IExchangeOrderMakerBridge orderMaker)
+        public App(IExchangeClient krakenClient, KrakenSocketClient krakenSocketClient)
         {
-            CreateMarketWatcher(Context.ActorOf(Props.Create(() => new BetsSupervisor(priceReader)), nameof(BetsSupervisor)));
+            CreateMarketWatcher(Context.ActorOf(Props.Create(() => new BetsSupervisor()), nameof(BetsSupervisor)));
 
             void CreateMarketWatcher(IActorRef marketUpdatesListener)
             {
-                var childProps = Props.Create(() => new RealtimeKrakenWatcher(krakenRestClient, krakenSocketClient, marketUpdatesListener));
+                var childProps = Props.Create(() => new RealtimeKrakenWatcher(krakenClient, krakenSocketClient, marketUpdatesListener));
                 var supervisor = BackoffSupervisor.Props(Backoff.OnFailure(childProps,
                     childName: nameof(RealtimeKrakenWatcher),
                     minBackoff: TimeSpan.FromSeconds(3),
@@ -27,13 +26,6 @@ namespace SimpleTrader
             }
         }
 
-        protected override SupervisorStrategy SupervisorStrategy()
-        {
-            return new AllForOneStrategy(e =>
-            {
-                Context.GetLogger().Error(e, "SOMETHING WENT WRONG, TEMPORARY WORKAROUND");
-                return Directive.Resume; // TEMPORARY
-            });
-        }
+        protected override SupervisorStrategy SupervisorStrategy() => new AllForOneStrategy(e => Directive.Stop);
     }
 }

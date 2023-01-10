@@ -10,26 +10,22 @@ using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
 string krakenApiKey = Environment.GetEnvironmentVariable("KRAKEN_API_KEY") ?? Empty;
 string krakenApiKeySecret = Environment.GetEnvironmentVariable("KRAKEN_API_KEY_SECRET") ?? Empty;
+ApiCredentials? apiCredentials = IsNullOrWhiteSpace(krakenApiKey) || IsNullOrWhiteSpace(krakenApiKeySecret)
+        ? new ApiCredentials(krakenApiKey, krakenApiKeySecret)
+        : null;
 
-var krakenClientOptions = IsNullOrWhiteSpace(krakenApiKey) || IsNullOrWhiteSpace(krakenApiKeySecret)
-    ? new KrakenClientOptions { LogLevel = LogLevel.Trace, RequestTimeout = TimeSpan.FromSeconds(20) }
-    : new KrakenClientOptions
-    {
-        ApiCredentials = new ApiCredentials(krakenApiKey, krakenApiKeySecret),
-        LogLevel = LogLevel.Trace,
-        RequestTimeout = TimeSpan.FromSeconds(20)
-    };
-
-KrakenClient krakenRestClient = new KrakenClient(krakenClientOptions);
+var krakenClient = new KrakenClientAdapter(new KrakenClient(new KrakenClientOptions
+{
+    ApiCredentials = apiCredentials,
+    LogLevel = LogLevel.Trace,
+    RequestTimeout = TimeSpan.FromSeconds(20)
+}));
 
 var krakenSocketClient = new KrakenSocketClient(new KrakenSocketClientOptions()
 {
-        ApiCredentials = new ApiCredentials(krakenApiKey, krakenApiKeySecret),
-        LogLevel = LogLevel.Trace,
+    ApiCredentials = apiCredentials,
+    LogLevel = LogLevel.Trace,
 });
 
-var krakenAdapter = new KrakenAdapter(krakenRestClient);
-
-new SyncAppProcess(new AppBridge(Props.Create(() =>
-        new App(krakenRestClient, krakenSocketClient, krakenAdapter, new ExchangeBridge(krakenAdapter)))))
+new SyncAppProcess(new AppBridge(Props.Create(() => new App(krakenClient, krakenSocketClient))))
     .StartAndWaitForTermination();

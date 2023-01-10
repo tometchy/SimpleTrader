@@ -1,7 +1,6 @@
 using Akka.Actor;
 using Akka.Event;
-using SimpleTrader.Bet;
-using SimpleTrader.Events;
+using SimpleTrader.Exchange;
 using static System.StringComparison;
 
 namespace SimpleTrader.TrendDetectors;
@@ -45,7 +44,7 @@ public class ExtraFixedPercentageFixedLookBackTrendDetector : ReceiveActor
                     }
 
                     Context.GetLogger().Info($"LONG Bet detected: {theNewest.LastTradePrice} compared to {old.LastTradePrice}");
-                    Context.Parent.Tell(new TrendDetected(theNewest.Timestamp, BetType.Long, theNewest.LastTradePrice,
+                    Context.Parent.Tell(new HotAssetDetected(theNewest.Timestamp, theNewest.LastTradePrice,
                         Context.Self.Path.Name, theNewest.PairTicker));
                     return;
                 }
@@ -64,7 +63,7 @@ public class ExtraFixedPercentageFixedLookBackTrendDetector : ReceiveActor
                     }
 
                     Context.GetLogger().Info($"SHORT Bet detected: {theNewest.LastTradePrice} compared to {old.LastTradePrice}");
-                    Context.Parent.Tell(new TrendDetected(theNewest.Timestamp, BetType.Short, theNewest.LastTradePrice,
+                    Context.Parent.Tell(new HotAssetDetected(theNewest.Timestamp, theNewest.LastTradePrice,
                         Context.Self.Path.Name, theNewest.PairTicker));
                     return;
                 }

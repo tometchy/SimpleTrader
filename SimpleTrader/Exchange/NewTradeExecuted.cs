@@ -1,4 +1,4 @@
-namespace SimpleTrader.Events;
+namespace SimpleTrader.Exchange;
 
 public class NewTradeExecuted
 {

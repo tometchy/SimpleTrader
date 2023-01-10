@@ -1,6 +1,5 @@
 using Akka.Actor;
 using NUnit.Framework;
-using SimpleTrader.Events;
 using SimpleTrader.TrendDetectors;
 using TestsUtilities;
 using static System.TimeSpan;
