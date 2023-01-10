@@ -8,10 +8,9 @@ using SimpleTrader.Exchange;
 using static System.String;
 using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
-var krakenSocketClient = new KrakenSocketClient();
-
 string krakenApiKey = Environment.GetEnvironmentVariable("KRAKEN_API_KEY") ?? Empty;
 string krakenApiKeySecret = Environment.GetEnvironmentVariable("KRAKEN_API_KEY_SECRET") ?? Empty;
+
 var krakenClientOptions = IsNullOrWhiteSpace(krakenApiKey) || IsNullOrWhiteSpace(krakenApiKeySecret)
     ? new KrakenClientOptions { LogLevel = LogLevel.Trace, RequestTimeout = TimeSpan.FromSeconds(20) }
     : new KrakenClientOptions
@@ -20,7 +19,15 @@ var krakenClientOptions = IsNullOrWhiteSpace(krakenApiKey) || IsNullOrWhiteSpace
         LogLevel = LogLevel.Trace,
         RequestTimeout = TimeSpan.FromSeconds(20)
     };
+
 KrakenClient krakenRestClient = new KrakenClient(krakenClientOptions);
+
+var krakenSocketClient = new KrakenSocketClient(new KrakenSocketClientOptions()
+{
+        ApiCredentials = new ApiCredentials(krakenApiKey, krakenApiKeySecret),
+        LogLevel = LogLevel.Trace,
+});
+
 var krakenAdapter = new KrakenAdapter(krakenRestClient);
 
 new SyncAppProcess(new AppBridge(Props.Create(() =>
