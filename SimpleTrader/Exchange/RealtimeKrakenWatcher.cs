@@ -22,13 +22,10 @@ public class RealtimeKrakenWatcher : ReceiveActor
         {
             var tickersToSubscribe = new List<string>(r.Data.Values.Select(symbol => symbol.WebsocketName)
                 .Where(n => n.EndsWith("/USD") && !n.Contains("usdt", InvariantCultureIgnoreCase)));
-            var lastUpdate = NullMarketUpdated.Instance;
-            krakenSocketClient.SpotStreams.SubscribeToTickerUpdatesAsync(tickersToSubscribe, data =>
-                {
-                    var newUpdate = new MarketUpdated(data.Topic ?? Empty, data.Timestamp, data.Data.LastTrade.Price, data.Data.LastTrade.Quantity);
-                    if (!lastUpdate.Equals(newUpdate)) receiver.Tell(newUpdate, self);
-                    lastUpdate = newUpdate;
-                })
+
+            krakenSocketClient.SpotStreams.SubscribeToTickerUpdatesAsync(tickersToSubscribe, data => receiver.Tell(
+                    new NewTradeExecuted(data.Topic ?? Empty, data.Timestamp, data.Data.LastTrade.Price, data.Data.LastTrade.Quantity),
+                    self))
                 .ContinueWith(r => r.Result)
                 .PipeTo(self);
         });

@@ -103,7 +103,7 @@ public class BetsSupervisor : ReceiveActor
                 nameof(ExtraFixedPercentageFixedLookBackTrendDetector) +
                 $"_{howLongToLookBack}_{percentageToCross}_{howLongPriceNotSeenBefore}");
 
-        Receive<MarketUpdated>(m =>
+        Receive<NewTradeExecuted>(m =>
         {
             Context.GetLogger().Debug($"Propagating market update: {m}");
             Context.ActorSelection("*").Tell(m, Sender);

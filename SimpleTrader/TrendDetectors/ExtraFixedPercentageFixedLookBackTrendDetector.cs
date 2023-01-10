@@ -8,14 +8,14 @@ namespace SimpleTrader.TrendDetectors;
 
 public class ExtraFixedPercentageFixedLookBackTrendDetector : ReceiveActor
 {
-    readonly List<MarketUpdated> _updates = new();
+    readonly List<NewTradeExecuted> _updates = new();
 
     public ExtraFixedPercentageFixedLookBackTrendDetector(TimeSpan howLongToLookBack, decimal percentageToCross,
         TimeSpan howLongPriceNotSeenBefore)
     {
         Context.GetLogger().Info($"Creating trend detector: {Context.Self.Path.Name}");
 
-        Receive<MarketUpdated>(theNewest =>
+        Receive<NewTradeExecuted>(theNewest =>
         {
             _updates.Add(theNewest);
 

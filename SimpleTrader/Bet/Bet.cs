@@ -41,7 +41,7 @@ public class Bet : ReceiveActor
         CreateClosingSimulator(Props.Create(() => new FixedPercentageBetCloser(_trend, 0.5m)), nameof(FixedPercentageBetCloser) + "_0.5");
         CreateClosingSimulator(Props.Create(() => new FixedPercentageBetCloser(_trend, 1.5m)), nameof(FixedPercentageBetCloser) + "_1.5");
 
-        Receive<MarketUpdated>(m =>
+        Receive<NewTradeExecuted>(m =>
         {
             if(!string.Equals(m.PairTicker, _trend.PairTicker, StringComparison.InvariantCultureIgnoreCase))
                 return;
@@ -91,7 +91,7 @@ public class Bet : ReceiveActor
         {
             _scheduler = Context.System.Scheduler.ScheduleTellRepeatedlyCancelable(Zero, FromMinutes(1), Self, TimerElapsed.Instance, Self);
             Receive<TimerElapsed>(_ => _exchange.GetLastTradeData(_trend.PairTicker)
-                .ContinueWith(r => new MarketUpdated(_trend.PairTicker, DateTime.UtcNow, r.Result.Price, r.Result.Quantity))
+                .ContinueWith(r => new NewTradeExecuted(_trend.PairTicker, DateTime.UtcNow, r.Result.Price, r.Result.Quantity))
                 .PipeTo(Self));
         }
     }

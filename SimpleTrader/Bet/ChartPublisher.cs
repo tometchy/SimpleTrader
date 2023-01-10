@@ -4,7 +4,7 @@ namespace SimpleTrader.Bet;
 
 public static class ChartPublisher
 {
-    public static void Publish(MarketUpdated newMarketUpdate)
+    public static void Publish(NewTradeExecuted newMarketUpdate)
     {
         var fileName = $"{newMarketUpdate.Exchange}_{newMarketUpdate.PairTicker}.html".ToLower().Replace("/", "");
         var filePath = $"/var/simple-trader/chart/{fileName}";

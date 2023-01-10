@@ -13,7 +13,7 @@ public class FixedPercentageBetCloser : ReceiveActor
         var theBiggestObservedPrice = trend.LastPrice;
         var theSmallestObservedPrice = trend.LastPrice;
         
-        Receive<MarketUpdated>(update =>
+        Receive<NewTradeExecuted>(update =>
         {
             if (update.LastTradePrice > theBiggestObservedPrice)
                 theBiggestObservedPrice = update.LastTradePrice;
